@@ -94,6 +94,7 @@ def analyser_fit(files_upload,center_co,n,tile_length,progress_bar):
                 lat = None
                 lon = None
                 alt = 0.0
+                nb_cases_avant = len(tiles_conquered)
                 for data in record:
                     if data.name == 'position_lat':
                         lat = semicircles_to_degrees(data.value)
@@ -101,7 +102,7 @@ def analyser_fit(files_upload,center_co,n,tile_length,progress_bar):
                         lon = semicircles_to_degrees(data.value)
                     elif data.name in ('altitude', 'enhanced_altitude'):
                         alt = float(data.value)
-                
+
                 if lat is not None and lon is not None:
                     coordinates.append([lon, lat])
 
@@ -112,7 +113,7 @@ def analyser_fit(files_upload,center_co,n,tile_length,progress_bar):
                         tiles_conquered.add((xtile,ytile))
 
             # Si le fichier contient un parcours valide, on crée la ligne (Feature)
-            if len(coordinates) > 1 and sport_date:
+            if len(coordinates) > 1 and sport_date and (len(tiles_conquered) - nb_cases_avant == 0):
 
                 track_color = [252, 76, 2] # ORANGE par défaut (track_color = [0, 153, 255] # BLEU CLAIR pour le vélo)
 
