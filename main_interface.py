@@ -21,8 +21,8 @@ col_multi = db.joueurs_multi # Ta "boîte" pour les joueurs multijoueur
 col_perso = db.joueurs_perso # Ta "boîte" pour les joueurs perso
 
 # --- CONFIGURATION DE L'ARÈNE T.R.A.C.E (50km x 50km) ---
-center_lat = 45.549763
-center_lon = -73.569735
+center_lat = 46.660988 ##MTL 45.549763
+center_lon = 0.362039 ##MTL -73.569735
 center_co_m = (center_lat,center_lon)
 tile_length = 0.4 # km
 n = 50
