@@ -1,6 +1,4 @@
-import os
 import gzip
-import json
 from fitparse import FitFile
 import math
 import io
