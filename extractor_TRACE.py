@@ -2,7 +2,6 @@ import os
 import gzip
 import json
 from fitparse import FitFile
-import gpxpy
 import math
 import io
 
