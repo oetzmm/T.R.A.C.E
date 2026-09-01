@@ -112,7 +112,7 @@ def analyser_fit(files_upload,center_co,n,tile_length,progress_bar):
                         tiles_conquered.add((xtile,ytile))
 
             # Si le fichier contient un parcours valide, on crée la ligne (Feature)
-            if len(coordinates) > 1 and sport_date and (len(tiles_conquered) - nb_cases_avant != 0):
+            if len(coordinates) > 1 and sport_date:
 
                 track_color = [252, 76, 2] # ORANGE par défaut (track_color = [0, 153, 255] # BLEU CLAIR pour le vélo)
 
