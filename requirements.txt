@@ -1,5 +1,5 @@
 streamlit
 pandas
 pydeck
-pymongo
+pymongo[srv]
 fitparse
