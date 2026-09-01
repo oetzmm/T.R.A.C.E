@@ -425,6 +425,6 @@ elif onglet_actif == "GAMERULES":
     4. **Pas de double-points :** Repasser dans une case que vous avez déjà conquise ne rapporte aucun point supplémentaire. L'objectif est l'**EXPLORATION**.
 
     ### 💡 Avertissements :
-    # Seuls les fichiers .fit ou .fit.gz sont acceptés.
-    # Ne vous mettez pas en danger pour débloquer une case, je décline toute responsabilité.
-    # Matéo""")
+    ## Seuls les fichiers .fit ou .fit.gz sont acceptés.
+    ## Ne vous mettez pas en danger pour débloquer une case, je décline toute responsabilité.
+    ## Matéo""")
