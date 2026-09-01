@@ -103,89 +103,89 @@ if onglet_actif == "MULTIPLAYER":
             
     layers_m = []
     colored_tiles_m = set()
-    
-    # Calque 1 : Traces éphémères du joueur (bleu)
-    if st.session_state.traces_m:
-        colored_tiles_m.update(st.session_state.tuiles_m)
-        features_m = []
-        for i in st.session_state.traces_m:
-            if len(i) > 1:
-                features_m.append({
-                    "type": "Feature",
-                    "geometry": {"type": "LineString", "coordinates": i}
-                })
-        geojson_m = {"type":"FeatureCollection", "features":features_m}
-        layer_ephemere_m = pdk.Layer(
-            "GeoJsonLayer",
-            geojson_m,
-            pickable=False,
-            stroked=True,
-            filled=False,
-            get_line_color=[0, 191, 255], 
-            get_line_width=4,          
-            line_width_min_pixels=2,   
-            line_width_max_pixels=10,  
-        )
-        layers_m.append(layer_ephemere_m)
+    with st.spinner("Chargement de la carte multijoueur en cours..."):
+        # Calque 1 : Traces éphémères du joueur (bleu)
+        if st.session_state.traces_m:
+            colored_tiles_m.update(st.session_state.tuiles_m)
+            features_m = []
+            for i in st.session_state.traces_m:
+                if len(i) > 1:
+                    features_m.append({
+                        "type": "Feature",
+                        "geometry": {"type": "LineString", "coordinates": i}
+                    })
+            geojson_m = {"type":"FeatureCollection", "features":features_m}
+            layer_ephemere_m = pdk.Layer(
+                "GeoJsonLayer",
+                geojson_m,
+                pickable=False,
+                stroked=True,
+                filled=False,
+                get_line_color=[0, 191, 255], 
+                get_line_width=4,          
+                line_width_min_pixels=2,   
+                line_width_max_pixels=10,  
+            )
+            layers_m.append(layer_ephemere_m)
 
-    st.markdown("### Affichage multijoueur")
-    pseudo_dispo_m = []
-    for joueur in col_multi.find({}, {"pseudo": 1}): 
-        pseudo_dispo_m.append(joueur["pseudo"])
+        st.markdown("### Affichage carte multijoueur")
+        pseudo_dispo_m = []
+        for joueur in col_multi.find({}, {"pseudo": 1}): 
+            pseudo_dispo_m.append(joueur["pseudo"])
 
-    palette = [[255, 87, 34], [76, 175, 80], [156, 39, 176], [255, 193, 7], [233, 30, 99]]
+        palette = [[255, 87, 34], [76, 175, 80], [156, 39, 176], [255, 193, 7], [233, 30, 99]]
 
-    if pseudo_dispo_m:
-        colonnes_m = st.columns(len(pseudo_dispo_m))
+        if pseudo_dispo_m:
+            colonnes_m = st.columns(len(pseudo_dispo_m))
 
-        for i, pseudo_m in enumerate(pseudo_dispo_m):
-            color_m = palette[i % len(palette)]
-            with colonnes_m[i]:
-                afficher_joueur_m = st.checkbox(f"{pseudo_m}", value=True)
+            for i, pseudo_m in enumerate(pseudo_dispo_m):
+                color_m = palette[i % len(palette)]
+                with colonnes_m[i]:
+                    afficher_joueur_m = st.checkbox(f"{pseudo_m}", value=True)
 
-            if afficher_joueur_m:
-                # On cherche le document unique où le pseudo correspond, sans le champ _id
-                data_joueur_m = col_multi.find_one({"pseudo": pseudo_m}, {"_id": 0})
+                if afficher_joueur_m:
+                    # On cherche le document unique où le pseudo correspond, sans le champ _id
+                    data_joueur_m = col_multi.find_one({"pseudo": pseudo_m}, {"_id": 0})
 
-                layer_joueur_m = pdk.Layer(
-                    "GeoJsonLayer",
-                    data_joueur_m,
-                    pickable=False,
-                    stroked=True,
-                    filled=False,
-                    get_line_color=color_m,
-                    get_line_width=4,
-                    line_width_min_pixels=2,
-                    line_width_max_pixels=10,
-                    id=f"layer_{pseudo_m}"
-                    )
-                layers_m.append(layer_joueur_m)
+                    layer_joueur_m = pdk.Layer(
+                        "GeoJsonLayer",
+                        data_joueur_m,
+                        pickable=False,
+                        stroked=True,
+                        filled=False,
+                        get_line_color=color_m,
+                        get_line_width=4,
+                        line_width_min_pixels=2,
+                        line_width_max_pixels=10,
+                        id=f"layer_{pseudo_m}"
+                        )
+                    layers_m.append(layer_joueur_m)
 
-                if "tiles_conquered" in data_joueur_m:
-                    tuiles_joueur_m = [tuple(t) if isinstance(t,list) else t for t in data_joueur_m["tiles_conquered"]]
-                    colored_tiles_m.update(tuiles_joueur_m)
+                    if "tiles_conquered" in data_joueur_m:
+                        tuiles_joueur_m = [tuple(t) if isinstance(t,list) else t for t in data_joueur_m["tiles_conquered"]]
+                        colored_tiles_m.update(tuiles_joueur_m)
 
-    grille_data_m = gen_grid(center_co_m, tile_length, n, colored_tiles_m)
-    
-    # Calque 2 : la grille colorée selon les tuiles conquises
-    if grille_data_m:
-        layer_grille_m = pdk.Layer(
-            "GeoJsonLayer",
-            grille_data_m,
-            pickable=False,
-            stroked=True,
-            filled=True,
-            get_line_color=[255,255,255,40],
-            get_fill_color="properties.fill_color",
-            get_line_width=1,
-            line_width_min_pixels=1,
-        )
-        layers_m.insert(0, layer_grille_m)
+        grille_data_m = gen_grid(center_co_m, tile_length, n, colored_tiles_m)
+        
+        # Calque 2 : la grille colorée selon les tuiles conquises
+        if grille_data_m:
+            layer_grille_m = pdk.Layer(
+                "GeoJsonLayer",
+                grille_data_m,
+                pickable=False,
+                stroked=True,
+                filled=True,
+                get_line_color=[255,255,255,40],
+                get_fill_color="properties.fill_color",
+                get_line_width=1,
+                line_width_min_pixels=1,
+            )
+            layers_m.insert(0, layer_grille_m)
 
-    # Paramétrage de la caméra initiale
-    view_state_m = pdk.ViewState(latitude=center_lat, longitude=center_lon, zoom=10, min_zoom=1.5, max_zoom=20, pitch=0, bearing=0)
-    r_m = pdk.Deck(layers=layers_m, initial_view_state=view_state_m, map_provider="carto", map_style="dark")
-    st.pydeck_chart(r_m)
+        # AFFICHAGE
+        view_state_m = pdk.ViewState(latitude=center_lat, longitude=center_lon, zoom=10, min_zoom=1.5, max_zoom=20, pitch=0, bearing=0)
+        r_m = pdk.Deck(layers=layers_m, initial_view_state=view_state_m, map_provider="carto", map_style="dark")
+        st.pydeck_chart(r_m)
 
     # --- SAUVEGARDE DÉFINITIVE ---
     st.markdown("---")
@@ -416,14 +416,15 @@ elif onglet_actif == "GAMERULES":
     
     st.markdown("""
     **T.R.A.C.E.** est un jeu de conquête de territoire basé sur vos traces GPS réelles. 
-    L'arène est une immense grille de **50 km par 50 km**, découpée en **10 000 cases** de 500 mètres de côté.
+    L'arène est une immense grille de **50 km par 50 km**, découpée en cases carrée de 400 mètres de côté.
 
-    ### 📜 Les Règles Officielles :
-    1. **Le sport :** Seules la course à pied et la marche sont autorisées. Laissez les vélos au garage !
-    2. **La période :** La saison actuelle se déroule du **1er mai au 30 septembre 2026**.
-    3. **La capture :** Il suffit que votre trace GPS traverse une case (même un seul orteil !) pour que celle-ci soit capturée.
+    ### 📜 Les Règles :
+    1. **Le sport :** Seules la course à pied et la marche sont autorisées. Laissez les vélos au garage ! (ou payez moi et je développe la même version cycliste)
+    2. **La période :** La saison actuelle se déroule sur le premier semestre **du 1er septembre au 31 janvier**.
+    3. **La capture :** Il suffit que votre trace GPS traverse une case pour que celle-ci soit capturée.
     4. **Pas de double-points :** Repasser dans une case que vous avez déjà conquise ne rapporte aucun point supplémentaire. L'objectif est l'**EXPLORATION**.
 
-    ### 💡 Stratégie :
-    Pour gagner, il faut planifier ses itinéraires de course. Allez vous perdre dans des quartiers que vous ne connaissez pas, prenez des ruelles, et optimisez vos détours pour "gratter" les cases adjacentes !
-    """)
+    ### 💡 Avertissements :
+    # Seuls les fichiers .fit ou .fit.gz sont acceptés.
+    # Ne vous mettez pas en danger pour débloquer une case, je décline toute responsabilité.
+    # Matéo""")
