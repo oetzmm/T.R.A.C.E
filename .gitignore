@@ -1,0 +1,12 @@
+# Fichiers de sécurité Streamlit (Contient ton mot de passe MongoDB !)
+.streamlit/
+
+# Fichiers de données locales
+*.fit
+*.fit.gz
+joueurs/
+joueursperso/
+
+# Fichiers systèmes Python
+__pycache__/
+.DS_Store
