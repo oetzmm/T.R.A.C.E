@@ -81,9 +81,9 @@ def analyser_fit(files_upload,center_co,n,tile_length,progress_bar):
                             act_valid = False
                     elif data.name == 'start_time':
                         sport_date = data.value
-                        '''if sport_date.year != 2026 or sport_date.month not in [5,6,7,8] :
+                        if sport_date.year != 2025 or sport_date.month not in [1,9,10,11,12] :
                             print(f'Date not in range : {sport_date.day}/{sport_date.month}/{sport_date.year}')
-                            act_valid = False'''
+                            act_valid = False
                 break
 
             # 3. Extraction des points d'enregistrement ("records")
@@ -113,7 +113,7 @@ def analyser_fit(files_upload,center_co,n,tile_length,progress_bar):
                         tiles_conquered.add((xtile,ytile))
 
             # Si le fichier contient un parcours valide, on crée la ligne (Feature)
-            if len(coordinates) > 1 and sport_date and (len(tiles_conquered) - nb_cases_avant == 0):
+            if len(coordinates) > 1 and sport_date and (len(tiles_conquered) - nb_cases_avant != 0):
 
                 track_color = [252, 76, 2] # ORANGE par défaut (track_color = [0, 153, 255] # BLEU CLAIR pour le vélo)
 
