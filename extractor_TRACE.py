@@ -103,17 +103,16 @@ def analyser_fit(files_upload,center_co,n,tile_length,progress_bar):
                     elif data.name in ('altitude', 'enhanced_altitude'):
                         alt = float(data.value)
 
-                if lat is not None and lon is not None:
-                    coordinates.append([lon, lat])
+                    if lat is not None and lon is not None:
+                        coordinates.append([lon, lat])
+                        if min_lat <= lat <= max_lat and min_lon <= lon <= max_lon:
+                            xtile = math.floor((lon - min_lon)/step_lon)
+                            ytile = math.floor((lat - min_lat)/step_lat)
 
-                    if min_lat <= lat <= max_lat and min_lon <= lon <= max_lon:
-                        xtile = math.floor((lon - min_lon)/step_lon)
-                        ytile = math.floor((lat - min_lat)/step_lat)
-
-                        tiles_conquered.add((xtile,ytile))
-
+                            tiles_conquered.add((xtile,ytile))
+            nb_cases_apres = len(tiles_conquered)
             # Si le fichier contient un parcours valide, on crée la ligne (Feature)
-            if len(coordinates) > 1 and sport_date and (len(tiles_conquered) - nb_cases_avant != 0):
+            if len(coordinates) > 1 and sport_date and (nb_cases_apres - nb_cases_avant != 0):
 
                 track_color = [252, 76, 2] # ORANGE par défaut (track_color = [0, 153, 255] # BLEU CLAIR pour le vélo)
 
