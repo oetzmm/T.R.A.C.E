@@ -58,7 +58,7 @@ if "center_p" not in st.session_state:
 # --- CONFIGURATION DE LA PAGE ---
 st.set_page_config(page_title="T.R.A.C.E. Viewer", page_icon="🏃", layout="wide")
 
-st.title("T.R.A.C.E. - Territory Run and Amazing Challenge of Exploration")
+st.title("T.R.A.C.E. - Territory Run and Amazing Challenge of Exploration", text_alignment="center")
 
 # --- CRÉATION DU MENU (Remplacement des onglets) ---
 
