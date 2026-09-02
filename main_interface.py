@@ -261,7 +261,7 @@ if onglet_actif == "MULTIPLAYER MODE":
             time.sleep(2)
             st.rerun()
         else:
-            st.warning("Merci d'analyser vos fichiers et d'entrer un nom avant d'enregistrer.")
+            st.warning("Merci d'entrer un nom et une activité valide (lieu/temps)avant d'enregistrer.")
 
 # ==========================================
 # ONGLET 2 : LA CARTE PERSONNELLE (PERSO)
