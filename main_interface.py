@@ -73,7 +73,7 @@ st.markdown(
     
     /* Couleur des pastilles au survol de la souris */
     div[data-testid="stPills"] button:hover {
-        background-color: #f0f2f6 !important;
+        background-color: #fc4c02 !important;
         color: black !important;
     }
     </style>
