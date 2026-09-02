@@ -134,15 +134,46 @@ if onglet_actif == "MULTIPLAYER MODE":
         for joueur in col_multi.find({}, {"pseudo": 1}): 
             pseudo_dispo_m.append(joueur["pseudo"])
 
-        palette = [[255, 87, 34], [76, 175, 80], [156, 39, 176], [255, 193, 7], [233, 30, 99]]
+        # Palette de 20 couleurs RGB distinctes
+        palette = [
+            [255, 50, 50],   # 🔴 Rouge clair
+            [255, 135, 0],   # 🟠 Orange
+            [255, 220, 0],   # 🟡 Jaune
+            [80, 200, 80],   # 🟢 Vert clair
+            [50, 150, 255],  # 🔵 Bleu
+            [180, 50, 220],  # 🟣 Violet
+            [140, 90, 60],   # 🟤 Marron
+            [255, 255, 255], # ⚪ Blanc
+            [255, 105, 180], # 🩷 Rose clair
+            [100, 200, 255], # 🩵 Bleu ciel
+            [200, 0, 0],     # 🟥 Rouge sombre
+            [200, 100, 0],   # 🟧 Orange sombre
+            [200, 180, 0],   # 🟨 Ocre
+            [30, 130, 50],   # 🟩 Vert sombre
+            [20, 80, 200],   # 🟦 Bleu sombre
+            [120, 30, 150],  # 🟪 Violet sombre
+            [100, 60, 40],   # 🟫 Marron foncé
+            [170, 170, 170], # 🩶 Gris
+            [130, 130, 130], # 🖤 Gris foncé (adapté au fond noir de la carte)
+            [255, 20, 147]   # 💖 Rose profond
+        ]
+        # 20 Émojis correspondants exactement aux index de la palette
+        emojis = [
+            "🔴", "🟠", "🟡", "🟢", "🔵", 
+            "🟣", "🟤", "⚪", "🩷", "🩵", 
+            "🟥", "🟧", "🟨", "🟩", "🟦", 
+            "🟪", "🟫", "🩶", "🖤", "💖"
+        ]
 
         if pseudo_dispo_m:
             colonnes_m = st.columns(len(pseudo_dispo_m))
 
             for i, pseudo_m in enumerate(pseudo_dispo_m):
                 color_m = palette[i % len(palette)]
+                emo_m = emojis[i % len(palette)]
+
                 with colonnes_m[i]:
-                    afficher_joueur_m = st.checkbox(f"{pseudo_m}", value=True)
+                    afficher_joueur_m = st.checkbox(f"{emo_m} {pseudo_m}", value=True)
 
                 if afficher_joueur_m:
                     # On cherche le document unique où le pseudo correspond, sans le champ _id
