@@ -275,7 +275,7 @@ elif onglet_actif == "SOLO MODE":
     colored_tiles_p = set()
     
     # Calque 1 : Traces éphémères du joueur (Orange)
-    if st.session_state.traces_p:
+    if st.session_state.center_p:
         colored_tiles_p.update(st.session_state.tuiles_p)
         features_p = []
         for i in st.session_state.traces_p:
