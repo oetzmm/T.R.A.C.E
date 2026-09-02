@@ -276,49 +276,50 @@ elif onglet_actif == "SOLO MODE":
     
     # Calque 1 : Traces éphémères du joueur (Orange)
     with st.spinner("Chargement de la carte solo..."):
-        colored_tiles_p.update(st.session_state.tuiles_p)
-        features_p = []
-        for i in st.session_state.traces_p:
-            if len(i) > 1:
-                features_p.append({
-                    "type": "Feature",
-                    "geometry": {"type": "LineString", "coordinates": i}
-                })
-        geojson_p = {"type":"FeatureCollection", "features":features_p}
-        layer_ephemere_p = pdk.Layer(
-            "GeoJsonLayer",
-            geojson_p,
-            pickable=False,
-            stroked=True,
-            filled=False,
-            get_line_color=[255, 87, 34], # Orange
-            get_line_width=4,          
-            line_width_min_pixels=2,   
-            line_width_max_pixels=10,  
-        )
-        layers_p.append(layer_ephemere_p)
-
-        grille_data_p = gen_grid(st.session_state.center_p, tile_length, n, colored_tiles_p)
-        
-        # Calque 2 : la grille colorée selon les tuiles conquises
-        if grille_data_p:
-            layer_grille_p = pdk.Layer(
+        if st.session_state.center_co_p:
+            colored_tiles_p.update(st.session_state.tuiles_p)
+            features_p = []
+            for i in st.session_state.traces_p:
+                if len(i) > 1:
+                    features_p.append({
+                        "type": "Feature",
+                        "geometry": {"type": "LineString", "coordinates": i}
+                    })
+            geojson_p = {"type":"FeatureCollection", "features":features_p}
+            layer_ephemere_p = pdk.Layer(
                 "GeoJsonLayer",
-                grille_data_p,
+                geojson_p,
                 pickable=False,
                 stroked=True,
-                filled=True,
-                get_line_color=[255,255,255,40],
-                get_fill_color="properties.fill_color",
-                get_line_width=1,
-                line_width_min_pixels=1,
+                filled=False,
+                get_line_color=[255, 87, 34], # Orange
+                get_line_width=4,          
+                line_width_min_pixels=2,   
+                line_width_max_pixels=10,  
             )
-            layers_p.insert(0, layer_grille_p)
+            layers_p.append(layer_ephemere_p)
 
-        # Paramétrage de la caméra initiale sur les coordonnées perso
-        view_state_p = pdk.ViewState(latitude=st.session_state.center_p[0], longitude=st.session_state.center_p[1], zoom=10, min_zoom=1.5, max_zoom=20, pitch=0, bearing=0)
-        r_p = pdk.Deck(layers=layers_p, initial_view_state=view_state_p, map_provider="carto", map_style="dark")
-        st.pydeck_chart(r_p)
+            grille_data_p = gen_grid(st.session_state.center_p, tile_length, n, colored_tiles_p)
+            
+            # Calque 2 : la grille colorée selon les tuiles conquises
+            if grille_data_p:
+                layer_grille_p = pdk.Layer(
+                    "GeoJsonLayer",
+                    grille_data_p,
+                    pickable=False,
+                    stroked=True,
+                    filled=True,
+                    get_line_color=[255,255,255,40],
+                    get_fill_color="properties.fill_color",
+                    get_line_width=1,
+                    line_width_min_pixels=1,
+                )
+                layers_p.insert(0, layer_grille_p)
+
+            # Paramétrage de la caméra initiale sur les coordonnées perso
+            view_state_p = pdk.ViewState(latitude=st.session_state.center_p[0], longitude=st.session_state.center_p[1], zoom=10, min_zoom=1.5, max_zoom=20, pitch=0, bearing=0)
+            r_p = pdk.Deck(layers=layers_p, initial_view_state=view_state_p, map_provider="carto", map_style="dark")
+            st.pydeck_chart(r_p)
 
     # --- SAUVEGARDE DÉFINITIVE (PERSO) ---
     st.markdown("---")
