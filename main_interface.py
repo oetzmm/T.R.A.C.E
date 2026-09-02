@@ -61,25 +61,6 @@ st.set_page_config(page_title="T.R.A.C.E. Viewer", page_icon="🏃", layout="wid
 st.title("T.R.A.C.E. - Territory Run and Amazing Challenge of Exploration", text_alignment="center")
 
 # --- CRÉATION DU MENU (Remplacement des onglets) ---
-# Injection du style CSS pour personnaliser les st.pills
-st.markdown(
-    """
-    <style>
-    /* Couleur des pastilles lorsqu'elles sont sélectionnées (actives) */
-    div[data-testid="stPills"] button[aria-selected="true"] {
-        background-color: #fc4c02 !important;
-        color: white !important;
-    }
-    
-    /* Couleur des pastilles au survol de la souris */
-    div[data-testid="stPills"] button:hover {
-        background-color: #fc4c02 !important;
-        color: black !important;
-    }
-    </style>
-    """,
-    unsafe_allow_html=True,
-)
 onglet_actif = st.pills(
     "Navigation",
     options = ["MULTIPLAYER MODE", "SOLO MODE", "LEADERBOARDS", "GAMERULES"],
