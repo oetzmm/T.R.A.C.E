@@ -282,7 +282,7 @@ elif onglet_actif == "SOLO MODE":
 
     choix_arene = st.selectbox("Choisis une arène existante ou crée-en une nouvelle :", options=options_menu, key="select_arene")
 
-    if choix_arene != "Nouvelle arène":
+    if choix_arene == "Nouvelle arène":
         col1, col2 = st.columns(2)
         with col1:
             lat_perso = st.number_input("Latitude du centre", value=0.00000, format="%.6f", key="lat_p")
@@ -301,7 +301,7 @@ elif onglet_actif == "SOLO MODE":
             st.session_state.tuiles_p.clear()
             st.session_state.traces_p.clear()
 
-        st.info(f"Arène existante : {choix_arene} (Centre : {coords[0]:.6f}, {coords[1]:.6f})")
+        st.info(f"{choix_arene} (Centre : {coords[0]:.6f}, {coords[1]:.6f})")
 
     center_co_p = st.session_state.center_p
     
