@@ -261,7 +261,7 @@ if onglet_actif == "MULTIPLAYER MODE":
             time.sleep(2)
             st.rerun()
         else:
-            st.warning("Merci d'entrer un nom et une activité valide (lieu/temps)avant d'enregistrer.")
+            st.warning("Merci d'entrer un nom et une activité valide (lieu/période) avant d'enregistrer.")
 
 # ==========================================
 # ONGLET 2 : LA CARTE PERSONNELLE (PERSO)
@@ -272,19 +272,38 @@ elif onglet_actif == "SOLO MODE":
 
     # 1. Saisie des coordonnées
     st.markdown("### 1️⃣ Définis le centre de ton arène :")
+
+    used_arenes = {}
+    for doc in col_perso.find({"center": {"$exists": True}},{"lieu":1, "center": 1, "_id":0}):
+        if doc["lieu"] not in used_arenes:
+            used_arenes[doc["lieu"]] = doc["center"]
+
+    options_menu = ["Nouvelle arène"] + list(used_arenes.keys())
+
+    choix_arene = st.selectbox("Choisis une arène existante ou crée-en une nouvelle :", options=options_menu, key="select_arene")
+
+    if choix_arene != "Nouvelle arène":
+        col1, col2 = st.columns(2)
+        with col1:
+            lat_perso = st.number_input("Latitude du centre", value=0.00000, format="%.6f", key="lat_p")
+        with col2:
+            lon_perso = st.number_input("Longitude du centre", value=0.00000, format="%.6f", key="lon_p")
     
-    col1, col2 = st.columns(2)
-    with col1:
-        lat_perso = st.number_input("Latitude du centre", value=0.00000, format="%.6f", key="lat_p")
-    with col2:
-        lon_perso = st.number_input("Longitude du centre", value=0.00000, format="%.6f", key="lon_p")
+        if st.button("Générer mon arène", type="primary"):
+            st.session_state.center_p = (lat_perso, lon_perso)
+            st.session_state.tuiles_p.clear()
+            st.session_state.traces_p.clear()
+    else:
+        coords = used_arenes.get(choix_arene, (0.00000, 0.00000))
 
-    if st.button("Générer mon arène", type="primary"):
-        st.session_state.center_p = (lat_perso, lon_perso)
-        st.session_state.tuiles_p.clear()
-        st.session_state.traces_p.clear()
+        if st.button("Générer mon arène", type="primary"):
+            st.session_state.center_p = tuple(coords)
+            st.session_state.tuiles_p.clear()
+            st.session_state.traces_p.clear()
 
-    center_co_p = (lat_perso, lon_perso)
+        st.info(f"Arène existante : {choix_arene} (Centre : {coords[0]:.6f}, {coords[1]:.6f})")
+
+    center_co_p = st.session_state.center_p
     
     # 2. Upload spécifique
     external_files_p = st.file_uploader(
@@ -385,6 +404,7 @@ elif onglet_actif == "SOLO MODE":
                 geojson_final_p = {
                     "pseudo": pseudo_p, # Obligatoire pour MongoDB
                     "lieu": lieu_p,     # Obligatoire pour différencier les arènes
+                    "center": st.session_state.center_p, # Pour retrouver l'arène plus tard
                     "type": "FeatureCollection",
                     "score": len(tuiles_tot_p),
                     "tiles_conquered": list(tuiles_tot_p),
@@ -403,7 +423,7 @@ elif onglet_actif == "SOLO MODE":
             st.rerun()
             
         else:
-            st.warning("Merci d'analyser vos fichiers et d'entrer pseudo + localisation avant d'enregistrer.")
+            st.warning("Merci d'entrer une activité valide (lieu/période), un nom et un lieu avant d'enregistrer.")
 
 # ==========================================
 # ONGLET 3 : LE TABLEAU DES SCORES
