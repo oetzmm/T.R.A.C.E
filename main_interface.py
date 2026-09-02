@@ -27,7 +27,7 @@ center_lon = 0.362039 ##MTL -73.569735
 center_co_m = (center_lat,center_lon)
 tile_length = 0.4 # km
 n = 50
-# Calcul de la taille d'une tuile (500m) en degrés GPS
+# Calcul de la taille d'une tuile en degrés GPS
 step_lat = tile_length / 111.32  
 step_lon = tile_length / (111.32 * math.cos(math.radians(center_lat)))
 
@@ -61,15 +61,32 @@ st.set_page_config(page_title="T.R.A.C.E. Viewer", page_icon="🏃", layout="wid
 st.title("T.R.A.C.E. - Territory Run and Amazing Challenge of Exploration", text_alignment="center")
 
 # --- CRÉATION DU MENU (Remplacement des onglets) ---
-
+# Injection du style CSS pour personnaliser les st.pills
+st.markdown(
+    """
+    <style>
+    /* Couleur des pastilles lorsqu'elles sont sélectionnées (actives) */
+    div[data-testid="stPills"] button[aria-selected="true"] {
+        background-color: #fc4c02 !important;
+        color: white !important;
+    }
+    
+    /* Couleur des pastilles au survol de la souris */
+    div[data-testid="stPills"] button:hover {
+        background-color: #f0f2f6 !important;
+        color: black !important;
+    }
+    </style>
+    """,
+    unsafe_allow_html=True,
+)
 onglet_actif = st.pills(
     "Navigation",
     options = ["MULTIPLAYER MODE", "SOLO MODE", "LEADERBOARDS", "GAMERULES"],
     default="GAMERULES", # L'onglet par défaut au chargement
     width="stretch",
     label_visibility="collapsed",
-    
-)
+    )
 
 # ==========================================
 # ONGLET 1 : LA CARTE INTERACTIVE (MULTI)
