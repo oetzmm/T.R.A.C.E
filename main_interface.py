@@ -62,7 +62,7 @@ st.title("T.R.A.C.E. - Territory Run and Amazing Challenge of Exploration")
 
 # --- CRÉATION DU MENU (Remplacement des onglets) ---
 
-onglet_actif = st.button(
+onglet_actif = st.tabs(
     "Navigation",
     options = ["MULTIPLAYER", "SOLO", "LEADERBOARDS", "GAMERULES"],
     default="GAMERULES", # L'onglet par défaut au chargement
