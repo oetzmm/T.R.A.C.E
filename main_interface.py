@@ -28,7 +28,7 @@ center_co_m = (center_lat,center_lon)
 tile_length = 0.4 # km
 n = 50
 # Calcul de la taille d'une tuile en degrés GPS
-step_lat = tile_length / 111.32  
+step_lat = tile_length / 111.32
 step_lon = tile_length / (111.32 * math.cos(math.radians(center_lat)))
 
 # On calcule les "murs" de l'arène
@@ -99,7 +99,7 @@ if onglet_actif == "MULTIPLAYER MODE":
                 st.session_state.traces_m.extend(traces_m_allegees)
 
             barre_prog_m.empty()
-            st.success(f"Traces ajoutées ! Score temporaire : {len(st.session_state.tuiles_m)} tuiles.")
+            st.success(f"Traces ajoutées. Score temporaire : {len(st.session_state.tuiles_m)} tuiles.")
             
     layers_m = []
     colored_tiles_m = set()
@@ -278,7 +278,7 @@ elif onglet_actif == "SOLO MODE":
     colored_tiles_p.update(st.session_state.tuiles_p)
     features_p = []
     # Calque 1 : Traces éphémères du joueur (Orange)
-    if st.session_state.traces_p:
+    with st.spinner("Chargement de la carte solo..."):
         for i in st.session_state.traces_p:
             if len(i) > 1:
                 features_p.append({
