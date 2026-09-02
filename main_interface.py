@@ -74,7 +74,7 @@ onglet_actif = st.pills(
 # ONGLET 1 : LA CARTE INTERACTIVE (MULTI)
 # ==========================================
 if onglet_actif == "MULTIPLAYER MODE":
-    st.subheader("🏠 Carte multijoueur - ENSMA")
+    st.subheader("🏠 Carte multijoueur -- ENSMA -- Saison 1 (Septembre 25/Janvier 26)")
     st.markdown("### 1️⃣ Ajoute tes traces")
     st.info("Tu peux ajouter tes fichiers .fit en plusieurs fois. Ils s'accumuleront sur la carte de façon temporaire.")
     
@@ -103,7 +103,7 @@ if onglet_actif == "MULTIPLAYER MODE":
             
     layers_m = []
     colored_tiles_m = set()
-    with st.spinner("Chargement de la carte multijoueur en cours..."):
+    with st.spinner("Chargement de la carte multijoueur..."):
         # Calque 1 : Traces éphémères du joueur (bleu)
         if st.session_state.traces_m:
             colored_tiles_m.update(st.session_state.tuiles_m)
@@ -234,7 +234,7 @@ if onglet_actif == "MULTIPLAYER MODE":
 # ONGLET 2 : LA CARTE PERSONNELLE (PERSO)
 # ==========================================
 elif onglet_actif == "SOLO MODE":
-    st.subheader("🏠 Carte personnelle - Mode solo")
+    st.subheader("🏠 Carte personnelle -- Mode solo -- De tout temps")
     st.markdown("Ici tu peux choisir l'arène de ton choix pour te comparer aux autres 'à domicile'.")
 
     # 1. Saisie des coordonnées
@@ -275,7 +275,7 @@ elif onglet_actif == "SOLO MODE":
     colored_tiles_p = set()
     
     # Calque 1 : Traces éphémères du joueur (Orange)
-    if st.session_state.center_p:
+    with st.spinner("Chargement de la carte solo..."):
         colored_tiles_p.update(st.session_state.tuiles_p)
         features_p = []
         for i in st.session_state.traces_p:
