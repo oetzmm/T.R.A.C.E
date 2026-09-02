@@ -103,11 +103,11 @@ if onglet_actif == "MULTIPLAYER MODE":
             
     layers_m = []
     colored_tiles_m = set()
+    features_m = []
     with st.spinner("Chargement de la carte multijoueur..."):
         # Calque 1 : Traces éphémères du joueur (bleu)
         if st.session_state.traces_m:
             colored_tiles_m.update(st.session_state.tuiles_m)
-            features_m = []
             for i in st.session_state.traces_m:
                 if len(i) > 1:
                     features_m.append({
