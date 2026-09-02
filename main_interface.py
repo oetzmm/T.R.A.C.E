@@ -382,7 +382,7 @@ elif onglet_actif == "LEADERBOARDS":
         scores_m = []
         # On ne récupère que le pseudo et le score pour aller très vite
         for doc in col_multi.find({}, {"pseudo": 1, "score": 1, "_id": 0}):
-            scores_m.append({"Joueur": doc["pseudo"], "Score": doc.get("score", 0)})
+            scores_m.append({"Joueur": doc["pseudo"], "Score": doc.get("score", 0), "Pourcentage":100*doc.get("score", 0)/(n/tile_length)**2})
         if scores_m:
             scores_m = sorted(scores_m, key=lambda x: x["Score"], reverse=True)
             st.dataframe(scores_m, use_container_width=True, hide_index=True)
