@@ -191,7 +191,7 @@ if onglet_actif == "MULTIPLAYER MODE":
     st.markdown("---")
     st.markdown("### 2️⃣ Sauvegarde ton score")
 
-    pseudo_m = st.text_input("Entrer un pseudo:", key='pseudo_multi')
+    pseudo_m = st.text_input("Nom : ", key='pseudo_multi')
     
     if st.button("Sauvegarder", key='sauvegarde_multi'):
         if pseudo_m and features_m:
@@ -220,7 +220,7 @@ if onglet_actif == "MULTIPLAYER MODE":
 
                 # Sauvegarde cloud
                 col_multi.replace_one({"pseudo": pseudo_m}, geojson_final_m, upsert=True)       
-            st.success(f"Progression sauvegardée ! Score total de {pseudo_m} : {len(tuiles_tot_m)} tuiles.")
+            st.success(f"Progression sauvegardée. Score total de {pseudo_m} : {len(tuiles_tot_m)} tuiles.")
             
             st.session_state.tuiles_m.clear()
             st.session_state.traces_m.clear()
@@ -228,14 +228,14 @@ if onglet_actif == "MULTIPLAYER MODE":
             time.sleep(2)
             st.rerun()
         else:
-            st.warning("Merci d'analyser vos fichiers et d'entrer un pseudo avant d'enregistrer.")
+            st.warning("Merci d'analyser vos fichiers et d'entrer un nom avant d'enregistrer.")
 
 # ==========================================
 # ONGLET 2 : LA CARTE PERSONNELLE (PERSO)
 # ==========================================
 elif onglet_actif == "SOLO MODE":
     st.subheader("🏠 Carte personnelle -- Mode solo -- De tout temps")
-    st.markdown("Ici tu peux choisir l'arène de ton choix pour te comparer aux autres 'à domicile'.")
+    st.markdown("Ici, tu peux choisir l'arène de ton choix pour te comparer aux autres 'à domicile'.")
 
     # 1. Saisie des coordonnées
     st.markdown("### 1️⃣ Définis le centre de ton arène :")
@@ -324,11 +324,11 @@ elif onglet_actif == "SOLO MODE":
     st.markdown("---")
     st.markdown("### Sauvegarder mon score")
     
-    pseudo_p = st.text_input("Entrer un pseudo:", key='pseudo_p')
-    lieu_p = st.text_input("Localisation (ex: Paris, Lyon...)", key='lieu_p')
+    pseudo_p = st.text_input("Nom:", key='pseudo_p')
+    lieu_p = st.text_input("Localisation", key='lieu_p')
     
     with st.form("sauvegarde_perso"):
-        if st.form_submit_button("Sauvegarde ta progression"):
+        if st.form_submit_button("Sauvegarder"):
             if pseudo_p and lieu_p and features_p:
                 with st.spinner("Sauvegarde en cours..."):
                     tuiles_tot_p = set(st.session_state.tuiles_p)
