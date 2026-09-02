@@ -64,7 +64,7 @@ st.title("T.R.A.C.E. - Territory Run and Amazing Challenge of Exploration", text
 
 onglet_actif = st.pills(
     "Navigation",
-    options = ["MULTIPLAYER", "SOLO", "LEADERBOARDS", "GAMERULES"],
+    options = ["MULTIPLAYER MODE", "SOLO MODE", "LEADERBOARDS", "GAMERULES"],
     default="GAMERULES", # L'onglet par défaut au chargement
     width="stretch",
     label_visibility="collapsed",
@@ -74,7 +74,7 @@ onglet_actif = st.pills(
 # ==========================================
 # ONGLET 1 : LA CARTE INTERACTIVE (MULTI)
 # ==========================================
-if onglet_actif == "MULTIPLAYER":
+if onglet_actif == "MULTIPLAYER MODE":
     st.subheader("🏠 Carte multijoueur - ENSMA")
     st.markdown("### 1️⃣ Ajoute tes traces")
     st.info("Tu peux ajouter tes fichiers .fit en plusieurs fois. Ils s'accumuleront sur la carte de façon temporaire.")
@@ -234,7 +234,7 @@ if onglet_actif == "MULTIPLAYER":
 # ==========================================
 # ONGLET 2 : LA CARTE PERSONNELLE (PERSO)
 # ==========================================
-elif onglet_actif == "SOLO":
+elif onglet_actif == "SOLO MODE":
     st.subheader("🏠 Carte personnelle - Mode solo")
     st.markdown("Ici tu peux choisir l'arène de ton choix pour te comparer aux autres 'à domicile'.")
 
@@ -243,9 +243,9 @@ elif onglet_actif == "SOLO":
     
     col1, col2 = st.columns(2)
     with col1:
-        lat_perso = st.number_input("Latitude du centre", value=0, format="%.6f", key="lat_p")
+        lat_perso = st.number_input("Latitude du centre", value=0.0000, format="%.6f", key="lat_p")
     with col2:
-        lon_perso = st.number_input("Longitude du centre", value=0, format="%.6f", key="lon_p")
+        lon_perso = st.number_input("Longitude du centre", value=0.0000, format="%.6f", key="lon_p")
 
     center_co_p = (lat_perso, lon_perso)
     
