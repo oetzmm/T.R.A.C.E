@@ -252,7 +252,7 @@ elif onglet_actif == "SOLO MODE":
         st.session_state.center_p = (lat_perso, lon_perso)
         st.session_state.tuiles_p.clear()
         st.session_state.traces_p.clear()
-        
+
     center_co_p = (lat_perso, lon_perso)
     
     # 2. Upload spécifique
@@ -333,47 +333,47 @@ elif onglet_actif == "SOLO MODE":
     pseudo_p = st.text_input("Nom:", key='pseudo_p')
     lieu_p = st.text_input("Localisation", key='lieu_p')
     
-    with st.form("sauvegarde_perso"):
-        if st.form_submit_button("Sauvegarder"):
-            if pseudo_p and lieu_p and features_p:
-                with st.spinner("Sauvegarde en cours..."):
-                    tuiles_tot_p = set(st.session_state.tuiles_p)
-                    traces_tot_p = features_p.copy()
 
-                    # On cherche dans la BDD avec le pseudo ET le lieu
-                    anciennes_data_p = col_perso.find_one({"pseudo": pseudo_p, "lieu": lieu_p}, {"_id": 0})
+    if st.form_submit_button("Sauvegarder"):
+        if pseudo_p and lieu_p and features_p:
+            with st.spinner("Sauvegarde en cours..."):
+                tuiles_tot_p = set(st.session_state.tuiles_p)
+                traces_tot_p = features_p.copy()
 
-                    if anciennes_data_p:
-                        if "tiles_conquered" in anciennes_data_p:
-                            anciennes_tuiles_p = [tuple(t) if isinstance(t,list) else t for t in anciennes_data_p["tiles_conquered"]]
-                            tuiles_tot_p.update(anciennes_tuiles_p)
-                            
-                        if "features" in anciennes_data_p:
-                            traces_tot_p.extend(anciennes_data_p["features"])
-                    
-                    geojson_final_p = {
-                        "pseudo": pseudo_p, # Obligatoire pour MongoDB
-                        "lieu": lieu_p,     # Obligatoire pour différencier les arènes
-                        "type": "FeatureCollection",
-                        "score": len(tuiles_tot_p),
-                        "tiles_conquered": list(tuiles_tot_p),
-                        "features": traces_tot_p
-                    }
-                    
-                    # Remplacement/Création en cloud
-                    col_perso.replace_one({"pseudo": pseudo_p, "lieu": lieu_p}, geojson_final_p, upsert=True)
+                # On cherche dans la BDD avec le pseudo ET le lieu
+                anciennes_data_p = col_perso.find_one({"pseudo": pseudo_p, "lieu": lieu_p}, {"_id": 0})
 
-                st.success(f"Progression sauvegardée ! Score total de {pseudo_p} à {lieu_p} : {len(tuiles_tot_p)} tuiles.")
+                if anciennes_data_p:
+                    if "tiles_conquered" in anciennes_data_p:
+                        anciennes_tuiles_p = [tuple(t) if isinstance(t,list) else t for t in anciennes_data_p["tiles_conquered"]]
+                        tuiles_tot_p.update(anciennes_tuiles_p)
+                        
+                    if "features" in anciennes_data_p:
+                        traces_tot_p.extend(anciennes_data_p["features"])
                 
-                st.session_state.tuiles_p.clear()
-                st.session_state.traces_p.clear()
+                geojson_final_p = {
+                    "pseudo": pseudo_p, # Obligatoire pour MongoDB
+                    "lieu": lieu_p,     # Obligatoire pour différencier les arènes
+                    "type": "FeatureCollection",
+                    "score": len(tuiles_tot_p),
+                    "tiles_conquered": list(tuiles_tot_p),
+                    "features": traces_tot_p
+                }
                 
-                time.sleep(2)
-                st.rerun()
-                
-            else:
-                st.warning("Merci d'analyser vos fichiers et d'entrer pseudo + localisation avant d'enregistrer.")
-  
+                # Remplacement/Création en cloud
+                col_perso.replace_one({"pseudo": pseudo_p, "lieu": lieu_p}, geojson_final_p, upsert=True)
+
+            st.success(f"Progression sauvegardée ! Score total de {pseudo_p} à {lieu_p} : {len(tuiles_tot_p)} tuiles.")
+            
+            st.session_state.tuiles_p.clear()
+            st.session_state.traces_p.clear()
+            
+            time.sleep(2)
+            st.rerun()
+            
+        else:
+            st.warning("Merci d'analyser vos fichiers et d'entrer pseudo + localisation avant d'enregistrer.")
+
 # ==========================================
 # ONGLET 3 : LE TABLEAU DES SCORES
 # ==========================================
