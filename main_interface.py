@@ -244,10 +244,15 @@ elif onglet_actif == "SOLO MODE":
     
     col1, col2 = st.columns(2)
     with col1:
-        lat_perso = st.number_input("Latitude du centre", format="%.6f", key="lat_p")
+        lat_perso = st.number_input("Latitude du centre", value=0.00000, format="%.6f", key="lat_p")
     with col2:
-        lon_perso = st.number_input("Longitude du centre", format="%.6f", key="lon_p")
+        lon_perso = st.number_input("Longitude du centre", value=0.00000, format="%.6f", key="lon_p")
 
+    if st.button("Générer mon arène", type="primary"):
+        st.session_state.center_p = (lat_perso, lon_perso)
+        st.session_state.tuiles_p.clear()
+        st.session_state.traces_p.clear()
+        
     center_co_p = (lat_perso, lon_perso)
     
     # 2. Upload spécifique
