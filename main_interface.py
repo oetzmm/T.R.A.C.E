@@ -398,12 +398,12 @@ elif onglet_actif == "LEADERBOARDS":
         for doc in col_perso.find({},{"pseudo":1,"lieu":1,"score":1,"_id":0}):
             score_p = doc.get("score",0)
             pseudo_complet = f"{doc.get('pseudo','Inconnu')}({doc.get('lieu','Inconnu')})"
-            scores_p.append({"Joueur":pseudo_complet,"Score":score_p,"Pourcentage":100*score_p/(n/tile_length)**2})
+            scores_p.append({"Joueur":pseudo_complet,"Score":score_p,"Pourcentage":100*score_p/n**2})
 
         if scores_p:
             scores_p = sorted(scores_p, key=lambda x: x["Score"], reverse=True)
             st.dataframe(scores_p, use_container_width=True, hide_index=True)
-            st.progress(scores_p[0]["Score"]/(n/tile_length)**2, text=f"Progression du leader: {100*scores_p[0]["Score"]/(n/tile_length)**2:.2f}%")
+            st.progress(scores_p[0]["Score"]/n**2, text=f"Progression du leader: {100*scores_p[0]["Score"]/n**2:.2f}%")
         else:
             st.info("Aucun score solo pour l'instant")
 
