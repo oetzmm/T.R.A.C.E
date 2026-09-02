@@ -372,13 +372,13 @@ elif onglet_actif == "SOLO MODE":
 # ONGLET 3 : LE TABLEAU DES SCORES
 # ==========================================
 elif onglet_actif == "LEADERBOARDS":
-    st.header("🏆 Les Classements")
+    st.header("Classements")
     
     col_m, col_p = st.columns(2)
     
     # --- CLASSEMENT 1 : ARÈNE OFFICIELLE ---
     with col_m:
-        st.subheader("🌍 Mode multijoueur")
+        st.subheader("🌍 Mode multijoueur -- Arène ENSMA -- Saison 1")
         scores_m = []
         # On ne récupère que le pseudo et le score pour aller très vite
         for doc in col_multi.find({}, {"pseudo": 1, "score": 1, "_id": 0}):
@@ -392,7 +392,7 @@ elif onglet_actif == "LEADERBOARDS":
 
     # --- CLASSEMENT 2 : CHACUN CHEZ SOI ---
     with col_p:
-        st.subheader("🏠 Mode solo")
+        st.subheader("🏠 Mode solo -- Arènes personnalisées -- De tout temps")
         scores_p = []
 
         for doc in col_perso.find({},{"pseudo":1,"lieu":1,"score":1,"_id":0}):
