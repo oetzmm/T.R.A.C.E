@@ -129,6 +129,7 @@ if onglet_actif == "MULTIPLAYER MODE":
             layers_m.append(layer_ephemere_m)
 
         st.markdown("### Affichage carte multijoueur")
+        tous_les_joueurs = list(col_multi.find({}, {"_id": 0}))
         pseudo_dispo_m = []
         for joueur in col_multi.find({}, {"pseudo": 1}): 
             pseudo_dispo_m.append(joueur["pseudo"])
@@ -145,25 +146,26 @@ if onglet_actif == "MULTIPLAYER MODE":
 
                 if afficher_joueur_m:
                     # On cherche le document unique où le pseudo correspond, sans le champ _id
-                    data_joueur_m = col_multi.find_one({"pseudo": pseudo_m}, {"_id": 0})
+                    data_joueur_m = next((j for j in tous_les_joueurs if j.get("pseudo") == pseudo_m), None)
 
-                    layer_joueur_m = pdk.Layer(
-                        "GeoJsonLayer",
-                        data_joueur_m,
-                        pickable=False,
-                        stroked=True,
-                        filled=False,
-                        get_line_color=color_m,
-                        get_line_width=4,
-                        line_width_min_pixels=2,
-                        line_width_max_pixels=10,
-                        id=f"layer_{pseudo_m}"
-                        )
-                    layers_m.append(layer_joueur_m)
+                    if data_joueur_m:
+                        layer_joueur_m = pdk.Layer(
+                            "GeoJsonLayer",
+                            data_joueur_m,
+                            pickable=False,
+                            stroked=True,
+                            filled=False,
+                            get_line_color=color_m,
+                            get_line_width=4,
+                            line_width_min_pixels=2,
+                            line_width_max_pixels=10,
+                            id=f"layer_{pseudo_m}"
+                            )
+                        layers_m.append(layer_joueur_m)
 
-                    if "tiles_conquered" in data_joueur_m:
-                        tuiles_joueur_m = [tuple(t) if isinstance(t,list) else t for t in data_joueur_m["tiles_conquered"]]
-                        colored_tiles_m.update(tuiles_joueur_m)
+                        if "tiles_conquered" in data_joueur_m:
+                            tuiles_joueur_m = [tuple(t) if isinstance(t,list) else t for t in data_joueur_m["tiles_conquered"]]
+                            colored_tiles_m.update(tuiles_joueur_m)
 
         grille_data_m = gen_grid(center_co_m, tile_length, n, colored_tiles_m)
         
