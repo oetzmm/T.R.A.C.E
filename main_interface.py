@@ -329,7 +329,7 @@ elif onglet_actif == "SOLO":
     lieu_p = st.text_input("Localisation (ex: Paris, Lyon...)", key='lieu_p')
     
     with st.form("sauvegarde_perso"):
-        if st.form_submit_button("Sauvegarder ma progression perso"):
+        if st.form_submit_button("Sauvegarde ta progression"):
             if pseudo_p and lieu_p and features_p:
                 with st.spinner("Sauvegarde en cours..."):
                     tuiles_tot_p = set(st.session_state.tuiles_p)
@@ -406,7 +406,7 @@ elif onglet_actif == "LEADERBOARDS":
             st.dataframe(scores_p, use_container_width=True, hide_index=True)
             st.progress(scores_p[0]["Score"]/(n/tile_length)**2, text=f"Progression du leader: {100*scores_p[0]["Score"]/(n/tile_length)**2:.2f}%")
         else:
-            st.info("Aucun score perso pour l'instant")
+            st.info("Aucun score solo pour l'instant")
 
 
 # ==========================================
@@ -419,11 +419,16 @@ elif onglet_actif == "GAMERULES":
     **T.R.A.C.E.** est un jeu de conquête de territoire basé sur vos traces GPS réelles. 
     L'arène est une immense grille de **50 km par 50 km**, découpée en cases carrée de 400 mètres de côté.
 
-    ### 📜 Les Règles :
+    ### 📜 Règles :
     1. **Le sport :** Seules la course à pied et la marche sont autorisées. Laissez les vélos au garage ! (ou payez moi et je développe la même version cycliste)
-    2. **La période :** La saison actuelle se déroule sur le premier semestre **du 1er septembre au 31 janvier**.
+    2. **La période :** La saison multijoueur actuelle se déroule sur le premier semestre **du 1er septembre au 31 janvier**.
     3. **La capture :** Il suffit que votre trace GPS traverse une case pour que celle-ci soit capturée.
     4. **Pas de double-points :** Repasser dans une case que vous avez déjà conquise ne rapporte aucun point supplémentaire. L'objectif est l'**EXPLORATION**.
+
+    ### Comment faire:
+    1. Allez sur strava ou tout logiciel de gestion de montre GPS (garmin, sunto, coros)
+    2. Téléchargez vos activités en fichiers .fit ou .fit.gz (une par une ou toutes à la fois c'est vous qui voyez)
+    3. Uploadez ces fichiers et participez à la compétition: en multijoueur à l'ENSMA ou en solo chez vous!
 
     ### 💡 Avertissements :
     #### Seuls les fichiers .fit ou .fit.gz sont acceptés.
