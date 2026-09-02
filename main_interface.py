@@ -392,7 +392,7 @@ elif onglet_actif == "LEADERBOARDS":
 
     # --- CLASSEMENT 2 : CHACUN CHEZ SOI ---
     with col_p:
-        st.subheader("🏠 Mode solo -- Arènes personnalisées -- De tout temps")
+        st.subheader("🏠 Mode solo -- Arène personnelle -- De tout temps")
         scores_p = []
 
         for doc in col_perso.find({},{"pseudo":1,"lieu":1,"score":1,"_id":0}):
