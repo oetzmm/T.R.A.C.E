@@ -137,13 +137,13 @@ if onglet_actif == "MULTIPLAYER MODE":
         # Palette de 20 couleurs RGB distinctes
         palette = [
             [255, 50, 50],   # 🔴 Rouge clair
-            [255, 135, 0],   # 🟠 Orange
             [255, 220, 0],   # 🟡 Jaune
             [80, 200, 80],   # 🟢 Vert clair
             [50, 150, 255],  # 🔵 Bleu
+            [255, 135, 0],   # 🟠 Orange
+            [255, 255, 255], # ⚪ Blanc
             [180, 50, 220],  # 🟣 Violet
             [140, 90, 60],   # 🟤 Marron
-            [255, 255, 255], # ⚪ Blanc
             [255, 105, 180], # 🩷 Rose clair
             [100, 200, 255], # 🩵 Bleu ciel
             [200, 0, 0],     # 🟥 Rouge sombre
@@ -159,8 +159,8 @@ if onglet_actif == "MULTIPLAYER MODE":
         ]
         # 20 Émojis correspondants exactement aux index de la palette
         emojis = [
-            "🔴", "🟠", "🟡", "🟢", "🔵", 
-            "🟣", "🟤", "⚪", "🩷", "🩵", 
+            "🔴", "🟡", "🟢", "🔵", "🟠",
+            "⚪", "🟣", "🟤", "🩷", "🩵", 
             "🟥", "🟧", "🟨", "🟩", "🟦", 
             "🟪", "🟫", "🩶", "🖤", "💖"
         ]
