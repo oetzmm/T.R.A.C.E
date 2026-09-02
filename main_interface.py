@@ -244,9 +244,9 @@ elif onglet_actif == "SOLO MODE":
     
     col1, col2 = st.columns(2)
     with col1:
-        lat_perso = st.number_input("Latitude du centre", value=0.0000, format="%.6f", key="lat_p")
+        lat_perso = st.number_input("Latitude du centre", format="%.6f", key="lat_p")
     with col2:
-        lon_perso = st.number_input("Longitude du centre", value=0.0000, format="%.6f", key="lon_p")
+        lon_perso = st.number_input("Longitude du centre", format="%.6f", key="lon_p")
 
     center_co_p = (lat_perso, lon_perso)
     
@@ -387,7 +387,7 @@ elif onglet_actif == "LEADERBOARDS":
         if scores_m:
             scores_m = sorted(scores_m, key=lambda x: x["Score"], reverse=True)
             st.dataframe(scores_m, use_container_width=True, hide_index=True)
-            st.progress(scores_m[0]["Score"]/n**2, text=f"Progression du leader: {100*scores_m[0]["Score"]/n**2}%")
+            st.progress(scores_m[0]['Score']/n**2, text=f"Progression du leader: {100*scores_m[0]['Score']/n**2}%")
         else:
             st.info("Aucun score multi pour l'instant")
 
@@ -404,10 +404,9 @@ elif onglet_actif == "LEADERBOARDS":
         if scores_p:
             scores_p = sorted(scores_p, key=lambda x: x["Score"], reverse=True)
             st.dataframe(scores_p, use_container_width=True, hide_index=True)
-            st.progress(scores_p[0]["Score"]/n**2, text=f"Progression du leader: {100*scores_p[0]["Score"]/n**2:.2f}%")
+            st.progress(scores_p[0]['Score']/n**2, text=f"Progression du leader: {100*scores_p[0]['Score']/n**2:.2f}%")
         else:
             st.info("Aucun score solo pour l'instant")
-
 
 # ==========================================
 # ONGLET 4 : LES RÈGLES DU JEU
