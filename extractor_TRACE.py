@@ -81,7 +81,7 @@ def analyser_fit(files_upload,center_co,n,tile_length,progress_bar):
                             act_valid = False
                     elif data.name == 'start_time':
                         sport_date = data.value
-                        if sport_date.year != 2025 or sport_date.month not in [1,9,10,11,12] :
+                        if (sport_date.year != 2025 or sport_date.month not in [9,10,11,12]) and  (sport_date.year != 2026 or sport_date.month not in [1]):
                             print(f'Date not in range : {sport_date.day}/{sport_date.month}/{sport_date.year}')
                             act_valid = False
                 break
