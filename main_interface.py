@@ -67,6 +67,7 @@ onglet_actif = st.pills(
     default="GAMERULES", # L'onglet par défaut au chargement
     required=True,
     label_visibility="collapsed",
+    width="stretch"
     )
 
 # ==========================================
