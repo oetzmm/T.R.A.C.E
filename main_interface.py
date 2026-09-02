@@ -420,7 +420,7 @@ elif onglet_actif == "GAMERULES":
     L'arène est une immense grille de **50 km par 50 km**, découpée en cases carrée de 400 mètres de côté.
 
     ### 📜 Règles :
-    1. **Le sport :** Seules la course à pied et la marche sont autorisées. Laissez les vélos au garage ! (ou payez moi et je développe la même version cycliste)
+    1. **Le sport :** Seules la course à pied et la marche sont autorisées. Laissez les vélos au garage ! (ou payez moi et je développe la même appli en version cycliste)
     2. **La période :** La saison multijoueur actuelle se déroule sur le premier semestre **du 1er septembre 26 au 31 janvier 27**.
     3. **La zone :** Les traces qui ne débloquent aucune case de l'arène ne sont pas considérées pour alléger l'affichage et la mémoire utilisée.
     4. **La capture :** Il suffit que votre trace GPS traverse une case pour que celle-ci soit capturée.
@@ -431,6 +431,5 @@ elif onglet_actif == "GAMERULES":
     2. Téléchargez vos activités en fichiers .fit ou .fit.gz (une par une ou toutes à la fois c'est vous qui voyez)
     3. Uploadez ces fichiers et participez à la compétition: en multijoueur à l'ENSMA ou en solo chez vous!
 
-    ### 💡 Avertissements :
-    ## Ne vous mettez pas en danger pour débloquer une case, je décline toute responsabilité.
-    ### Matéo""")
+    ### ⚠️ Avertissement :
+    ## Ne vous mettez pas en danger pour débloquer une case, le créateur de ce jeu décline toute responsabilité.""")
