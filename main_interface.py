@@ -334,7 +334,7 @@ elif onglet_actif == "SOLO MODE":
     lieu_p = st.text_input("Localisation", key='lieu_p')
     
 
-    if st.form_submit_button("Sauvegarder"):
+    if st.button("Sauvegarder"):
         if pseudo_p and lieu_p and features_p:
             with st.spinner("Sauvegarde en cours..."):
                 tuiles_tot_p = set(st.session_state.tuiles_p)
