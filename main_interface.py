@@ -85,6 +85,7 @@ onglet_actif = st.pills(
     options = ["MULTIPLAYER MODE", "SOLO MODE", "LEADERBOARDS", "GAMERULES"],
     default="GAMERULES", # L'onglet par défaut au chargement
     width="stretch",
+    required=True,
     label_visibility="collapsed",
     )
 
