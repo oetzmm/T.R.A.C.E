@@ -62,12 +62,11 @@ st.title("T.R.A.C.E. - Territory Run and Amazing Challenge of Exploration")
 
 # --- CRÉATION DU MENU (Remplacement des onglets) ---
 
-onglet_actif = st.radio(
+onglet_actif = st.pills(
     "Navigation",
     options = ["MULTIPLAYER", "SOLO", "LEADERBOARDS", "GAMERULES"],
-    index = 3, #default="GAMERULES", # L'onglet par défaut au chargement
-    #width="stretch",
-    horizontal=True,
+    default="GAMERULES", # L'onglet par défaut au chargement
+    width="stretch",
     label_visibility="collapsed",
     
 )
