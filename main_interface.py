@@ -65,8 +65,9 @@ st.title("T.R.A.C.E. - Territory Run and Amazing Challenge of Exploration")
 onglet_actif = st.radio(
     "Navigation",
     options = ["MULTIPLAYER", "SOLO", "LEADERBOARDS", "GAMERULES"],
-    default="GAMERULES", # L'onglet par défaut au chargement
-    width="stretch",
+    index = 3, #default="GAMERULES", # L'onglet par défaut au chargement
+    #width="stretch",
+    horizontal=True,
     label_visibility="collapsed",
     
 )
