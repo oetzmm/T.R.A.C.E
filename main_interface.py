@@ -384,7 +384,7 @@ elif onglet_actif == "LEADERBOARDS":
         for doc in col_multi.find({}, {"pseudo": 1, "score": 1, "_id": 0}):
             scores_m.append({"Joueur": doc["pseudo"], "Score": doc.get("score", 0), "Pourcentage":100*doc.get("score", 0)/(n/tile_length)**2})
         if scores_m:
-            scores_m = sorted(scores_m, key=lambda x: x["Score (tuiles conquises)"], reverse=True)
+            scores_m = sorted(scores_m, key=lambda x: x["Score"], reverse=True)
             st.dataframe(scores_m, use_container_width=True, hide_index=True)
             st.progress(scores_m[0]["Score"]/(n/tile_length)**2, text=f"Progression du leader: {100*scores_m[0]["Score"]/(n/tile_length)**2}%")
         else:
@@ -401,7 +401,7 @@ elif onglet_actif == "LEADERBOARDS":
             scores_p.append({"Joueur":pseudo_complet,"Score":score_p,"Pourcentage":100*score_p/(n/tile_length)**2})
 
         if scores_p:
-            scores_p = sorted(scores_p, key=lambda x: x["Score (tuiles conquises)"], reverse=True)
+            scores_p = sorted(scores_p, key=lambda x: x["Score"], reverse=True)
             st.dataframe(scores_p, use_container_width=True, hide_index=True)
             st.progress(scores_p[0]["Score"]/(n/tile_length)**2, text=f"Progression du leader: {100*scores_p[0]["Score"]/(n/tile_length)**2:.2f}%")
         else:
