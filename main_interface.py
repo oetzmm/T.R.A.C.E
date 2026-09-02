@@ -421,7 +421,7 @@ elif onglet_actif == "GAMERULES":
 
     ### 📜 Règles :
     1. **Le sport :** Seules la course à pied et la marche sont autorisées. Laissez les vélos au garage ! (ou payez moi et je développe la même version cycliste)
-    2. **La période :** La saison multijoueur actuelle se déroule sur le premier semestre **du 1er septembre au 31 janvier**.
+    2. **La période :** La saison multijoueur actuelle se déroule sur le premier semestre **du 1er septembre 26 au 31 janvier 27**.
     3. **La zone :** Les traces qui ne débloquent aucune case de l'arène ne sont pas considérées pour alléger l'affichage et la mémoire utilisée.
     4. **La capture :** Il suffit que votre trace GPS traverse une case pour que celle-ci soit capturée.
     5. **Pas de double-points :** Repasser dans une case que vous avez déjà conquise ne rapporte aucun point supplémentaire. L'objectif est l'**EXPLORATION**.
