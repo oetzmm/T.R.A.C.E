@@ -422,15 +422,15 @@ elif onglet_actif == "GAMERULES":
     ### 📜 Règles :
     1. **Le sport :** Seules la course à pied et la marche sont autorisées. Laissez les vélos au garage ! (ou payez moi et je développe la même version cycliste)
     2. **La période :** La saison multijoueur actuelle se déroule sur le premier semestre **du 1er septembre au 31 janvier**.
-    3. **La capture :** Il suffit que votre trace GPS traverse une case pour que celle-ci soit capturée.
-    4. **Pas de double-points :** Repasser dans une case que vous avez déjà conquise ne rapporte aucun point supplémentaire. L'objectif est l'**EXPLORATION**.
+    3. **La zone : ** Les traces qui ne débloquent aucune case de l'arène ne sont pas considérées pour alléger l'affichage et la mémoire utilisée.
+    4. **La capture :** Il suffit que votre trace GPS traverse une case pour que celle-ci soit capturée.
+    5. **Pas de double-points :** Repasser dans une case que vous avez déjà conquise ne rapporte aucun point supplémentaire. L'objectif est l'**EXPLORATION**.
 
     ### ⚙️ Comment faire :
-    1. Allez sur strava ou tout logiciel de gestion de montre GPS (garmin, sunto, coros)
+    1. Allez sur strava ou tout logiciel de gestion de montre GPS (garmin, suunto, coros)
     2. Téléchargez vos activités en fichiers .fit ou .fit.gz (une par une ou toutes à la fois c'est vous qui voyez)
     3. Uploadez ces fichiers et participez à la compétition: en multijoueur à l'ENSMA ou en solo chez vous!
 
     ### 💡 Avertissements :
-    #### Seuls les fichiers .fit ou .fit.gz sont acceptés.
-    ### Ne vous mettez pas en danger pour débloquer une case, je décline toute responsabilité.
-    #### Matéo""")
+    ## Ne vous mettez pas en danger pour débloquer une case, je décline toute responsabilité.
+    ### Matéo""")
