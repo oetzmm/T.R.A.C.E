@@ -318,7 +318,7 @@ elif onglet_actif == "SOLO MODE":
         # Paramétrage de la caméra initiale sur les coordonnées perso
         view_state_p = pdk.ViewState(latitude=st.session_state.center_p[0], longitude=st.session_state.center_p[1], zoom=10, min_zoom=1.5, max_zoom=20, pitch=0, bearing=0)
         r_p = pdk.Deck(layers=layers_p, initial_view_state=view_state_p, map_provider="carto", map_style="dark")
-        st.pydeck_chart(r_p)
+    st.pydeck_chart(r_p)
 
     # --- SAUVEGARDE DÉFINITIVE (PERSO) ---
     st.markdown("---")
