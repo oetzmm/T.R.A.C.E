@@ -25,8 +25,8 @@ col_perso = db.joueurs_perso # Ta "boîte" pour les joueurs perso
 center_lat = 46.660988 ##MTL 45.549763
 center_lon = 0.362039 ##MTL -73.569735
 center_co_m = (center_lat,center_lon)
-tile_length = 0.4 # km
-n = 50
+tile_length = 0.3 # km
+n = 20
 # Calcul de la taille d'une tuile en degrés GPS
 step_lat = tile_length / 111.32
 step_lon = tile_length / (111.32 * math.cos(math.radians(center_lat)))
@@ -289,14 +289,14 @@ elif onglet_actif == "SOLO MODE":
         with col2:
             lon_perso = st.number_input("Longitude du centre", value=0.00000, format="%.6f", key="lon_p")
     
-        if st.button("Générer mon arène", type="primary"):
+        if st.button("Créer mon arène", type="primary"):
             st.session_state.center_p = (lat_perso, lon_perso)
             st.session_state.tuiles_p.clear()
             st.session_state.traces_p.clear()
     else:
         coords = used_arenes.get(choix_arene, (0.00000, 0.00000))
 
-        if st.button("Générer mon arène", type="primary"):
+        if st.button("Générer l'arène", type="primary"):
             st.session_state.center_p = tuple(coords)
             st.session_state.tuiles_p.clear()
             st.session_state.traces_p.clear()
