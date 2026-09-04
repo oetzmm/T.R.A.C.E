@@ -100,11 +100,8 @@ if onglet_actif == "MULTIPLAYER MODE":
             with st.spinner("Analyse des traces en cours..."):
                 tuiles_m, traces_m = analyser_fit(external_files_m, center_co_m, n_m, tile_length_m, barre_prog_m)
 
-                # L'ASTUCE ANTI-16MB : On ne garde qu'un point GPS sur 10
-                traces_m_allegees = [trace[::10] for trace in traces_m]
-
                 st.session_state.tuiles_m.update(tuiles_m)
-                st.session_state.traces_m.extend(traces_m_allegees)
+                st.session_state.traces_m.extend(traces_m)
 
             barre_prog_m.empty()
             st.success(f"Traces ajoutées. Score temporaire : {len(st.session_state.tuiles_m)} tuiles.")
@@ -326,11 +323,8 @@ elif onglet_actif == "SOLO MODE":
             with st.spinner("Analyse des traces en cours..."):
                 tuiles_p, traces_p = analyser_fit_solo(external_files_p, center_co_p, n_p, tile_length_p, barre_prog_p)
 
-                # L'ASTUCE ANTI-16MB : On ne garde qu'un point GPS sur 10
-                traces_p_allegees = [trace[::10] for trace in traces_p]
-
                 st.session_state.tuiles_p.update(tuiles_p)
-                st.session_state.traces_p.extend(traces_p_allegees)
+                st.session_state.traces_p.extend(traces_p)
                 st.session_state.center_p = center_co_p
 
             barre_prog_p.empty()
