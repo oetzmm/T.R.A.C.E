@@ -25,7 +25,7 @@ col_perso = db.joueurs_perso # Ta "boîte" pour les joueurs perso
 center_lat = 46.660988 ##MTL 45.549763
 center_lon = 0.362039 ##MTL -73.569735
 center_co_m = (center_lat,center_lon)
-tile_length = 0.25 # km
+tile_length = 0.3 # km
 n = 30
 # Calcul de la taille d'une tuile en degrés GPS
 step_lat = tile_length / 111.32
