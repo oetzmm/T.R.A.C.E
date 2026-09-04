@@ -391,7 +391,7 @@ elif onglet_actif == "SOLO MODE":
 
     # --- SAUVEGARDE DÉFINITIVE (PERSO) ---
     st.markdown("---")
-    st.markdown("###3️⃣ Sauvegarde")
+    st.markdown("### 3️⃣ Sauvegarde")
     
     pseudo_p = st.text_input("Nom:", key='pseudo_p')
     if choix_arene == "Nouvelle arène":
