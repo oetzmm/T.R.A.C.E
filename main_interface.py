@@ -88,8 +88,8 @@ onglet_actif = st.pills(
 # =========================================================================================
 if onglet_actif == "MULTIPLAYER MODE":
     st.subheader("🏠 Carte multijoueur -- ENSMA -- Saison 1 (Septembre 25/Janvier 26)")
-    st.markdown("### 1️⃣ Ajout de tes fichiers")
-    st.info("Tu peux ajouter tes fichiers .fit en plusieurs fois. Ils s'accumuleront sur la carte de façon temporaire.")
+    st.markdown("### 1️⃣ Ajout de tes traces")
+    st.info("Tu peux ajouter tes fichiers .fit en plusieurs fois. Ils s'accumuleront sur la carte de façon temporaire. (Attention, seules les traces passant dans l'arène et faites durant cette saison sont affichées)")
     
     # Zone d'upload
     with st.form("upload_form_multi", border=False):
