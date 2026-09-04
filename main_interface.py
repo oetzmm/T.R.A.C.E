@@ -26,7 +26,7 @@ center_lat = 46.660988 ##MTL 45.549763
 center_lon = 0.362039 ##MTL -73.569735
 center_co_m = (center_lat,center_lon)
 tile_length = 0.1 # km
-n = 30
+n = 50
 # Calcul de la taille d'une tuile en degrés GPS
 step_lat = tile_length / 111.32
 step_lon = tile_length / (111.32 * math.cos(math.radians(center_lat)))
