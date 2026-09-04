@@ -301,7 +301,7 @@ elif onglet_actif == "SOLO MODE":
     else:
         coords = used_arenes.get(choix_arene, (0.00000, 0.00000))
 
-        if st.button("Générer l'arène", type="primary"):
+        if st.button("Rafraîchir l'arène", type="primary"):
             st.session_state.center_p = tuple(coords)
             st.session_state.tuiles_p.clear()
             st.session_state.traces_p.clear()
@@ -383,8 +383,11 @@ elif onglet_actif == "SOLO MODE":
     st.markdown("### Sauvegarder mon score")
     
     pseudo_p = st.text_input("Nom:", key='pseudo_p')
-    lieu_p = st.text_input("Localisation", key='lieu_p')
-    
+    if choix_arene == "Nouvelle arène":
+        lieu_p = st.text_input("Nom de l'arène:", key='lieu_p')
+    else:
+        lieu_p = choix_arene
+        st.info(f"Localisation : {lieu_p} (Centre : {st.session_state.center_p[0]:.6f}, {st.session_state.center_p[1]:.6f})")    
 
     if st.button("Sauvegarder"):
         if pseudo_p and lieu_p and features_p:
