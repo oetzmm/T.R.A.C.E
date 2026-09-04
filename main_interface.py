@@ -21,27 +21,30 @@ db = client.trace_game # Nom de ta base de données globale
 col_multi = db.joueurs_multi # Ta "boîte" pour les joueurs multijoueur
 col_perso = db.joueurs_perso # Ta "boîte" pour les joueurs perso
 
-# --- CONFIGURATION DE L'ARÈNE T.R.A.C.E (50km x 50km) ---
+# --- CONFIGURATION DE L'ARÈNE T.R.A.C.E ---
+# Variables pour le mode multijoueur
+
 center_lat = 46.660988 ##MTL 45.549763
 center_lon = 0.362039 ##MTL -73.569735
-center_co_m = (center_lat,center_lon)
 tile_length_m = 0.3 # km
 n_m = 30
-tile_length_p = 0.5 # km
-n_p = 50
+center_co_m = (center_lat,center_lon)
 # Calcul de la taille d'une tuile en degrés GPS
 step_lat_m = tile_length_m / 111.32
 step_lon_m = tile_length_m / (111.32 * math.cos(math.radians(center_lat)))
-step_lat_p = tile_length_p / 111.32
-step_lon_p = tile_length_p / (111.32 * math.cos(math.radians(center_lat)))
-
 # On calcule les "murs" de l'arène
-
 min_lat_m = center_lat - (n_m * step_lat_m * 0.5)
 max_lat_m = center_lat + (n_m * step_lat_m * 0.5)
 min_lon_m = center_lon - (n_m * step_lon_m * 0.5)
 max_lon_m = center_lon + (n_m * step_lon_m * 0.5)
 
+
+# Variables pour le mode solo
+
+tile_length_p = 0.5 # km
+n_p = 50
+step_lat_p = tile_length_p / 111.32
+step_lon_p = tile_length_p / (111.32 * math.cos(math.radians(center_lat)))
 min_lat_p = center_lat - (n_p * step_lat_p * 0.5)
 max_lat_p = center_lat + (n_p * step_lat_p * 0.5)
 min_lon_p = center_lon - (n_p * step_lon_p * 0.5)
@@ -78,9 +81,11 @@ onglet_actif = st.pills(
     width="stretch"
     )
 
-# ==========================================
+# =========================================================================================
+# =========================================================================================
 # ONGLET 1 : LA CARTE INTERACTIVE (MULTI)
-# ==========================================
+# =========================================================================================
+# =========================================================================================
 if onglet_actif == "MULTIPLAYER MODE":
     st.subheader("🏠 Carte multijoueur -- ENSMA -- Saison 1 (Septembre 25/Janvier 26)")
     st.markdown("### 1️⃣ Ajoute tes traces")
@@ -268,9 +273,11 @@ if onglet_actif == "MULTIPLAYER MODE":
         else:
             st.warning("Merci d'entrer un nom et une activité valide (lieu/période) avant d'enregistrer.")
 
-# ==========================================
+# =========================================================================================
+# =========================================================================================
 # ONGLET 2 : LA CARTE PERSONNELLE (PERSO)
-# ==========================================
+# =========================================================================================
+# =========================================================================================
 elif onglet_actif == "SOLO MODE":
     st.subheader("🏠 Carte personnelle -- Mode solo -- De tout temps")
     st.markdown("Ici, tu peux choisir l'arène de ton choix pour te comparer aux autres 'à domicile'.")
@@ -430,9 +437,11 @@ elif onglet_actif == "SOLO MODE":
         else:
             st.warning("Merci d'entrer une activité valide (lieu/période), un nom et un lieu avant d'enregistrer.")
 
-# ==========================================
+# =========================================================================================
+# =========================================================================================
 # ONGLET 3 : LE TABLEAU DES SCORES
-# ==========================================
+# =========================================================================================
+# =========================================================================================
 elif onglet_actif == "LEADERBOARDS":
     st.header("Classements")
     
@@ -469,15 +478,17 @@ elif onglet_actif == "LEADERBOARDS":
         else:
             st.info("Aucun score solo pour l'instant")
 
-# ==========================================
+# =========================================================================================
+# =========================================================================================
 # ONGLET 4 : LES RÈGLES DU JEU
-# ==========================================
+# =========================================================================================
+# =========================================================================================
 elif onglet_actif == "GAMERULES":
     st.subheader("Comment jouer à T.R.A.C.E. ?")
     
     st.markdown("""
     **T.R.A.C.E.** est un jeu de conquête de territoire basé sur vos traces GPS réelles. 
-    L'arène est une immense grille de **50 km par 50 km**, découpée en cases carrée de 400 mètres de côté.
+    L'arène est une immense grille de **50 km par 50 km**, découpée en cases carrée de 300 mètres de côté.
 
     ### 📜 Règles :
     1. **Le sport :** Seules la course à pied et la marche sont autorisées. Laissez les vélos au garage ! (ou payez moi et je développe la même appli en version cycliste)
