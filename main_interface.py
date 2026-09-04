@@ -92,25 +92,26 @@ if onglet_actif == "MULTIPLAYER MODE":
     st.info("Tu peux ajouter tes fichiers .fit en plusieurs fois. Ils s'accumuleront sur la carte de façon temporaire.")
     
     # Zone d'upload
-    external_files_m = st.file_uploader(
-            "Ajoute tes fichiers .fit ici", 
-            type=["fit","fit.gz"], 
-            accept_multiple_files=True,
-            key="upload_multi"
-        )
+    with st.form("upload_form_multi", border=False):
+        external_files_m = st.file_uploader(
+                "Ajoute tes fichiers .fit ici", 
+                type=["fit","fit.gz"], 
+                accept_multiple_files=True,
+                key="upload_multi"
+            )
+        bouton_analyse_m = st.form_submit_button("Analyser ces traces", key="analyse_multi")
+
+    if external_files_m and bouton_analyse_m:
+        barre_prog_m = st.progress(0)
+        with st.spinner("Analyse des traces en cours..."):
+            tuiles_m, traces_m = analyser_fit(external_files_m, center_co_m, n_m, tile_length_m, barre_prog_m)
+
+            st.session_state.tuiles_m.update(tuiles_m)
+            st.session_state.traces_m.extend(traces_m)
+
+        barre_prog_m.empty()
+        st.success(f"Traces ajoutées. Score temporaire : {len(st.session_state.tuiles_m)} tuiles.")
         
-    if external_files_m:
-        if st.button("Analyser ces fichiers", key="analyse_multi"):
-            barre_prog_m = st.progress(0)
-            with st.spinner("Analyse des traces en cours..."):
-                tuiles_m, traces_m = analyser_fit(external_files_m, center_co_m, n_m, tile_length_m, barre_prog_m)
-
-                st.session_state.tuiles_m.update(tuiles_m)
-                st.session_state.traces_m.extend(traces_m)
-
-            barre_prog_m.empty()
-            st.success(f"Traces ajoutées. Score temporaire : {len(st.session_state.tuiles_m)} tuiles.")
-            
     layers_m = []
     colored_tiles_m = set()
     features_m = []
