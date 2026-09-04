@@ -50,15 +50,6 @@ def analyser_fit(files_upload,center_co,n,tile_length,progress_bar):
         if filename_lower.endswith(".fit.gz"):
             donnees_brutes = file.read()
             donnees_decompressees = gzip.decompress(donnees_brutes)
-            
-            # --- LE DÉTECTEUR DE FICHIER ILLISIBLE ---
-            if b'.FIT' not in donnees_decompressees[:14]:
-                print(f"\n🚨 ANOMALIE sur le fichier : {file.name}")
-                print("Ce n'est pas un fichier FIT valide. Voici ses 50 premiers caractères :")
-                print(donnees_decompressees[:50])
-                print("--------------------------------------------------\n")
-                continue # On ignore ce fichier et on passe au suivant
-            
             fichier_virtuel = io.BytesIO(donnees_decompressees)
             fitfile = FitFile(fichier_virtuel)
             
