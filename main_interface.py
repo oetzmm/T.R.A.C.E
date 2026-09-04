@@ -89,7 +89,8 @@ onglet_actif = st.pills(
 if onglet_actif == "MULTIPLAYER MODE":
     st.subheader("🏠 Carte multijoueur -- ENSMA -- Saison 1 (Septembre 25/Janvier 26)")
     st.markdown("### 1️⃣ Ajout de tes traces")
-    st.info("Tu peux ajouter tes fichiers .fit en plusieurs fois. Ils s'accumuleront sur la carte de façon temporaire. (Attention, seules les traces passant dans l'arène et faites durant cette saison sont affichées)")
+    st.info("Tu peux ajouter tes fichiers .fit en plusieurs fois. Ils s'accumuleront sur la carte de façon temporaire. "
+    "(⚠️Attention⚠️, seules les traces passant dans l'arène et faites durant cette saison sont affichées)")
     
     # Zone d'upload
     with st.form("upload_form_multi", border=False):
@@ -317,16 +318,18 @@ elif onglet_actif == "SOLO MODE":
         st.info(f"{choix_arene} (Centre : {coords[0]:.6f}, {coords[1]:.6f})")
 
     center_co_p = st.session_state.center_p
-    
-    # 2. Upload spécifique
-    external_files_p = st.file_uploader(
-            "Ajoute tes fichiers .fit",
-            type=["fit","fit.gz"],
-            accept_multiple_files=True,
-            key="upload_perso")
-    
-    if external_files_p:
-        if st.button("Analyser ces fichiers", key='analyse_perso'):
+
+    st.markdown("### 2️⃣ Ajoute tes traces")
+    with st.form("form_upload_solo", border=False):
+        external_files_p = st.file_uploader(
+                "Ajoute tes fichiers .fit",
+                type=["fit","fit.gz"],
+                accept_multiple_files=True,
+                key="upload_perso")
+        
+        bouton_analyse_p = st.form_submit_button("Analyser ces fichiers")
+
+    if external_files_p and bouton_analyse_p:
             barre_prog_p = st.progress(0)
             with st.spinner("Analyse des traces en cours..."):
                 tuiles_p, traces_p = analyser_fit_solo(external_files_p, center_co_p, n_p, tile_length_p, barre_prog_p)
