@@ -88,7 +88,7 @@ onglet_actif = st.pills(
 # =========================================================================================
 if onglet_actif == "MULTIPLAYER MODE":
     st.subheader("🏠 Carte multijoueur -- ENSMA -- Saison 1 (Septembre 25/Janvier 26)")
-    st.markdown("### 1️⃣ Ajoute tes traces")
+    st.markdown("### 1️⃣ Ajout de tes fichiers")
     st.info("Tu peux ajouter tes fichiers .fit en plusieurs fois. Ils s'accumuleront sur la carte de façon temporaire.")
     
     # Zone d'upload
@@ -233,7 +233,7 @@ if onglet_actif == "MULTIPLAYER MODE":
 
     # --- SAUVEGARDE DÉFINITIVE ---
     st.markdown("---")
-    st.markdown("### 2️⃣ Sauvegarde ton score")
+    st.markdown("### 2️⃣ Sauvegarde")
 
     pseudo_m = st.text_input("Nom : ", key='pseudo_multi')
     
@@ -284,7 +284,7 @@ elif onglet_actif == "SOLO MODE":
     st.markdown("Ici, tu peux choisir l'arène de ton choix pour te comparer aux autres 'à domicile'.")
 
     # 1. Saisie des coordonnées
-    st.markdown("### 1️⃣ Définis le centre de ton arène :")
+    st.markdown("### 1️⃣ Définition de l'arène :")
 
     used_arenes = {}
     for doc in col_perso.find({"center": {"$exists": True}},{"lieu":1, "center": 1, "_id":0}):
