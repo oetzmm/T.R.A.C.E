@@ -387,7 +387,7 @@ elif onglet_actif == "SOLO MODE":
         lieu_p = st.text_input("Nom de l'arène:", key='lieu_p')
     else:
         lieu_p = choix_arene
-        st.info(f"Localisation : {lieu_p} (Centre : {st.session_state.center_p[0]:.6f}, {st.session_state.center_p[1]:.6f})")    
+        st.info(f"Localisation : {lieu_p}")    
 
     if st.button("Sauvegarder"):
         if pseudo_p and lieu_p and features_p:
