@@ -90,19 +90,12 @@ def analyser_fit(files_upload,center_co,n,tile_length,progress_bar):
             if not act_valid :
                 continue
 
-            
             nb_cases_avant = len(tiles_conquered)
-            for record in fitfile.get_messages('record'):
-                lat = None
-                lon = None
-                alt = 0.0
-                for data in record:
-                    if data.name == 'position_lat':
-                        lat = semicircles_to_degrees(data.value)
-                    elif data.name == 'position_long':
-                        lon = semicircles_to_degrees(data.value)
-                    elif data.name in ('altitude', 'enhanced_altitude'):
-                        alt = float(data.value)
+            for i,record in enumerate(fitfile.get_messages('record')):
+                if i % 10 != 0:
+                    continue  # On ne prend qu'un point sur 10 pour alléger le traitement
+                lat = semicircles_to_degrees(record.get_value('position_lat'))
+                lon = semicircles_to_degrees(record.get_value('position_long'))
 
                 if lat is not None and lon is not None:
                     coordinates.append([lon, lat])
