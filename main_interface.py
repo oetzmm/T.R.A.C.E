@@ -25,19 +25,27 @@ col_perso = db.joueurs_perso # Ta "boîte" pour les joueurs perso
 center_lat = 46.660988 ##MTL 45.549763
 center_lon = 0.362039 ##MTL -73.569735
 center_co_m = (center_lat,center_lon)
-tile_length = 0.3 # km
-n = 30
+tile_length_m = 0.3 # km
+n_m = 30
+tile_length_p = 0.5 # km
+n_p = 50
 # Calcul de la taille d'une tuile en degrés GPS
-step_lat = tile_length / 111.32
-step_lon = tile_length / (111.32 * math.cos(math.radians(center_lat)))
+step_lat_m = tile_length_m / 111.32
+step_lon_m = tile_length_m / (111.32 * math.cos(math.radians(center_lat)))
+step_lat_p = tile_length_p / 111.32
+step_lon_p = tile_length_p / (111.32 * math.cos(math.radians(center_lat)))
 
 # On calcule les "murs" de l'arène
 
-min_lat = center_lat - (n * step_lat * 0.5)
-max_lat = center_lat + (n * step_lat * 0.5)
-min_lon = center_lon - (n * step_lon * 0.5)
-max_lon = center_lon + (n * step_lon * 0.5)
+min_lat_m = center_lat - (n_m * step_lat_m * 0.5)
+max_lat_m = center_lat + (n_m * step_lat_m * 0.5)
+min_lon_m = center_lon - (n_m * step_lon_m * 0.5)
+max_lon_m = center_lon + (n_m * step_lon_m * 0.5)
 
+min_lat_p = center_lat - (n_p * step_lat_p * 0.5)
+max_lat_p = center_lat + (n_p * step_lat_p * 0.5)
+min_lon_p = center_lon - (n_p * step_lon_p * 0.5)
+max_lon_p = center_lon + (n_p * step_lon_p * 0.5)
 
 # --- INITIALISATION DE LA MÉMOIRE (SESSION STATE) ---
 
@@ -90,7 +98,7 @@ if onglet_actif == "MULTIPLAYER MODE":
         if st.button("Analyser ces fichiers", key="analyse_multi"):
             barre_prog_m = st.progress(0)
             with st.spinner("Analyse des traces en cours..."):
-                tuiles_m, traces_m = analyser_fit(external_files_m, center_co_m, n, tile_length, barre_prog_m)
+                tuiles_m, traces_m = analyser_fit(external_files_m, center_co_m, n_m, tile_length_m, barre_prog_m)
 
                 # L'ASTUCE ANTI-16MB : On ne garde qu'un point GPS sur 10
                 traces_m_allegees = [trace[::10] for trace in traces_m]
@@ -198,7 +206,7 @@ if onglet_actif == "MULTIPLAYER MODE":
                             tuiles_joueur_m = [tuple(t) if isinstance(t,list) else t for t in data_joueur_m["tiles_conquered"]]
                             colored_tiles_m.update(tuiles_joueur_m)
 
-        grille_data_m = gen_grid(center_co_m, tile_length, n, colored_tiles_m)
+        grille_data_m = gen_grid(center_co_m, tile_length_m, n_m, colored_tiles_m)
         
         # Calque 2 : la grille colorée selon les tuiles conquises
         if grille_data_m:
@@ -316,7 +324,7 @@ elif onglet_actif == "SOLO MODE":
         if st.button("Analyser ces fichiers", key='analyse_perso'):
             barre_prog_p = st.progress(0)
             with st.spinner("Analyse des traces en cours..."):
-                tuiles_p, traces_p = analyser_fit_solo(external_files_p, center_co_p, n, tile_length, barre_prog_p)
+                tuiles_p, traces_p = analyser_fit_solo(external_files_p, center_co_p, n_p, tile_length_p, barre_prog_p)
 
                 # L'ASTUCE ANTI-16MB : On ne garde qu'un point GPS sur 10
                 traces_p_allegees = [trace[::10] for trace in traces_p]
@@ -354,7 +362,7 @@ elif onglet_actif == "SOLO MODE":
         )
         layers_p.append(layer_ephemere_p)
 
-        grille_data_p = gen_grid(st.session_state.center_p, tile_length, n, colored_tiles_p)
+        grille_data_p = gen_grid(st.session_state.center_p, tile_length_p, n_p, colored_tiles_p)
         
         # Calque 2 : la grille colorée selon les tuiles conquises
         if grille_data_p:
@@ -433,17 +441,17 @@ elif onglet_actif == "LEADERBOARDS":
     
     col_m, col_p = st.columns(2)
     
-    # --- CLASSEMENT 1 : ARÈNE OFFICIELLE ---
+    # --- CLASSEMENT 1 : ARÈNE MULTI ---
     with col_m:
         st.subheader("🌍 Mode multijoueur -- Arène ENSMA -- Saison 1")
         scores_m = []
         # On ne récupère que le pseudo et le score pour aller très vite
         for doc in col_multi.find({}, {"pseudo": 1, "score": 1, "_id": 0}):
-            scores_m.append({"Joueur": doc["pseudo"], "Score": doc.get("score", 0), "Pourcentage":100*doc.get("score", 0)/n**2})
+            scores_m.append({"Joueur": doc["pseudo"], "Score": doc.get("score", 0), "Pourcentage":100*doc.get("score", 0)/n_m**2})
         if scores_m:
             scores_m = sorted(scores_m, key=lambda x: x["Score"], reverse=True)
             st.dataframe(scores_m, use_container_width=True, hide_index=True)
-            st.progress(scores_m[0]['Score']/n**2, text=f"Progression du leader: {100*scores_m[0]['Score']/n**2}%")
+            st.progress(scores_m[0]['Score']/n_m**2, text=f"Progression du leader: {100*scores_m[0]['Score']/n_m**2:.2f}%")
         else:
             st.info("Aucun score multi pour l'instant")
 
@@ -455,12 +463,12 @@ elif onglet_actif == "LEADERBOARDS":
         for doc in col_perso.find({},{"pseudo":1,"lieu":1,"score":1,"_id":0}):
             score_p = doc.get("score",0)
             pseudo_complet = f"{doc.get('pseudo','Inconnu')}({doc.get('lieu','Inconnu')})"
-            scores_p.append({"Joueur":pseudo_complet,"Score":score_p,"Pourcentage":100*score_p/n**2})
+            scores_p.append({"Joueur":pseudo_complet,"Score":score_p,"Pourcentage":100*score_p/n_p**2})
 
         if scores_p:
             scores_p = sorted(scores_p, key=lambda x: x["Score"], reverse=True)
             st.dataframe(scores_p, use_container_width=True, hide_index=True)
-            st.progress(scores_p[0]['Score']/n**2, text=f"Progression du leader: {100*scores_p[0]['Score']/n**2:.2f}%")
+            st.progress(scores_p[0]['Score']/n_p**2, text=f"Progression du leader: {100*scores_p[0]['Score']/n_p**2:.2f}%")
         else:
             st.info("Aucun score solo pour l'instant")
 
