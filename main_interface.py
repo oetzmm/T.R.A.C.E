@@ -85,7 +85,7 @@ onglet_actif = st.pills(
 # =========================================================================================
 # =========================================================================================
 if onglet_actif == "MULTIPLAYER MODE":
-    st.subheader("🏠 Carte multijoueur -- ENSMA -- Saison 1 (Septembre 25/Janvier 26)")
+    st.subheader("🏠 Carte multijoueur -- ENSMA -- Saison 1 (Septembre 2026)")
     st.markdown("### 1️⃣ Ajout de tes traces")
     st.info("Tu peux ajouter tes fichiers .fit en plusieurs fois. Ils s'accumuleront sur la carte de façon temporaire. "
     "(⚠️Attention⚠️ seules les traces passant dans l'arène et faites durant cette saison sont affichées)")
@@ -492,11 +492,11 @@ elif onglet_actif == "GAMERULES":
     
     st.markdown("""
     **T.R.A.C.E.** est un jeu de conquête de territoire basé sur vos traces GPS réelles. 
-    L'arène est une immense grille de **50 km par 50 km**, découpée en cases carrée de 300 mètres de côté.
+    L'arène est une immense grille de **9 km par 9 km**, découpée en cases carrée de 300 mètres de côté.
 
     ### 📜 Règles :
     1. **Le sport :** Seules la course à pied et la marche sont autorisées. Laissez les vélos au garage ! (ou payez moi et je développe la même appli en version cycliste)
-    2. **La période :** La saison multijoueur actuelle se déroule sur le premier semestre **du 1er septembre 26 au 31 janvier 27**.
+    2. **La période :** La saison multijoueur actuelle se déroule sur le mois de septembre **du 1er au 30 septembre 2026**.
     3. **La zone :** Les traces qui ne débloquent aucune case de l'arène ne sont pas considérées pour alléger l'affichage et la mémoire utilisée.
     4. **La capture :** Il suffit que votre trace GPS traverse une case pour que celle-ci soit capturée.
     5. **Pas de double-points :** Repasser dans une case que vous avez déjà conquise ne rapporte aucun point supplémentaire. L'objectif est l'**EXPLORATION**.
