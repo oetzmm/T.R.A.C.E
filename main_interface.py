@@ -138,7 +138,7 @@ if onglet_actif == "MULTIPLAYER MODE":
             )
             layers_m.append(layer_ephemere_m)
 
-        st.markdown(f"### Affichage carte multijoueur : {n_m} tuiles de {tile_length_m*1000} m de côté")
+        st.markdown(f"### Affichage carte multijoueur : {n_m} tuiles de {int(tile_length_m*1000)} m de côté")
         tous_les_joueurs = list(col_multi.find({}, {"_id": 0}))
         pseudo_dispo_m = []
         for joueur in col_multi.find({}, {"pseudo": 1}): 
@@ -339,7 +339,7 @@ elif onglet_actif == "SOLO MODE":
             barre_prog_p.empty()
             st.success(f"Traces ajoutées ! Score temporaire : {len(st.session_state.tuiles_p)} tuiles.")
 
-    st.markdown(f"### Affichage carte multijoueur : {n_m} tuiles de {tile_length_m*1000} m de côté")
+    st.markdown(f"### Affichage carte multijoueur : {n_p} tuiles de {int(tile_length_p*1000)} m de côté")
 
     layers_p = []
     colored_tiles_p = set()
