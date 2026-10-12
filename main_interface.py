@@ -507,5 +507,5 @@ elif onglet_actif == "GAMERULES":
     2. Téléchargez vos activités en fichiers .fit ou .fit.gz (une par une ou toutes à la fois c'est vous qui voyez).
     3. Uploadez ces fichiers et participez à la compétition: en multijoueur à l'ENSMA ou en solo chez vous!
 
-    ### ⚠️ Avertissement :
-    Ne vous mettez pas en danger pour débloquer une case, le créateur de ce jeu décline toute responsabilité.""")
+    ### ⚠️⚠️ Avertissement ⚠️⚠️:
+    ## Ne vous mettez pas en danger pour débloquer une case, le créateur de ce jeu décline toute responsabilité.""")
