@@ -88,7 +88,7 @@ if onglet_actif == "MULTIPLAYER MODE":
     st.subheader("🏠 Carte multijoueur -- ENSMA -- Saison 1 (Septembre/Octobre 2026)")
     st.markdown("### 1️⃣ Ajout de tes traces")
     st.markdown("Tu peux ajouter tes fichiers .fit en plusieurs fois. Ils s'accumuleront sur la carte de façon temporaire. Lorsqu'ils sont tous analysés, sauvegarde ta progression pour qu'elle soit visible par les autres joueurs.")
-    st.info("⚠️⚠️ Attention ⚠️⚠️ seules les traces passant dans l'arène et faites durant la bonne période sont traitées")
+    st.info("⚠️Attention⚠️ seules les traces passant dans l'arène et faites durant la bonne période sont traitées")
     
     # Zone d'upload
     with st.form("upload_form_multi", border=False):
