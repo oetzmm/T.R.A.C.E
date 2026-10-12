@@ -85,9 +85,9 @@ onglet_actif = st.pills(
 # =========================================================================================
 # =========================================================================================
 if onglet_actif == "MULTIPLAYER MODE":
-    st.subheader("🏠 Carte multijoueur -- ENSMA -- Saison 1 (Septembre/Octobre 2026)")
-    st.markdown("### 1️⃣ Ajout de tes traces")
-    st.markdown("Tu peux ajouter tes fichiers .fit en plusieurs fois. Ils s'accumuleront sur la carte de façon temporaire. Lorsqu'ils sont tous analysés, sauvegarde ta progression pour qu'elle soit visible par les autres joueurs.")
+    st.subheader("Mode multijoueur -- ENSMA -- Saison 1 (Septembre/Octobre 2026)")
+    st.markdown("### 1️⃣ Ajout des traces")
+    st.markdown("Tu peux ajouter tes fichiers .fit en plusieurs fois, ils s'accumuleront sur la carte de façon temporaire. Sauvegarde ensuite ta progression pour qu'elle soit visible par les autres joueurs !")
     st.info("⚠️Attention⚠️ seules les traces passant dans l'arène et faites durant la bonne période sont traitées")
     
     # Zone d'upload
@@ -279,7 +279,7 @@ if onglet_actif == "MULTIPLAYER MODE":
 # =========================================================================================
 # =========================================================================================
 elif onglet_actif == "SOLO MODE":
-    st.subheader("🏠 Carte personnelle -- Mode solo -- De tout temps")
+    st.subheader("Mode solo -- A domicile -- De tout temps")
     st.markdown("Ici, tu peux choisir l'arène de ton choix pour te comparer aux autres 'à domicile'.")
 
     # 1. Saisie des coordonnées
