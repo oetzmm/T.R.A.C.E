@@ -508,4 +508,4 @@ elif onglet_actif == "GAMERULES":
     3. Uploadez ces fichiers et participez à la compétition: en multijoueur à l'ENSMA ou en solo chez vous!
 
     ### ⚠️⚠️ Avertissement ⚠️⚠️:
-    ## Ne vous mettez pas en danger pour débloquer une case, le créateur de ce jeu décline toute responsabilité.""")
+    #### Ne vous mettez pas en danger pour débloquer une case, le créateur de ce jeu décline toute responsabilité.""")
