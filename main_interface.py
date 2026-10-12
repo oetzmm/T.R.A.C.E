@@ -85,7 +85,7 @@ onglet_actif = st.pills(
 # =========================================================================================
 # =========================================================================================
 if onglet_actif == "MULTIPLAYER MODE":
-    st.subheader("🏠 Carte multijoueur -- ENSMA -- Saison 1 (Septembre 2026)")
+    st.subheader("🏠 Carte multijoueur -- ENSMA -- Saison 1 (Septembre/Octobre 2026)")
     st.markdown("### 1️⃣ Ajout de tes traces")
     st.info("Tu peux ajouter tes fichiers .fit en plusieurs fois. Ils s'accumuleront sur la carte de façon temporaire. "
     "(⚠️Attention⚠️ seules les traces passant dans l'arène et faites durant cette saison sont affichées)")
@@ -497,7 +497,7 @@ elif onglet_actif == "GAMERULES":
     ### 📜 Règles :
     1. **Comment gagner :** Celui ou celle qui a débloqué le plus de tuiles à la fin de la saison gagne (voir l'onglet classements). Il suffit que votre trace GPS passe 1 fois une case pour que celle-ci soit débloquée.
     2. **Le sport :** Seules la course à pied et la marche sont autorisées. Laissez les vélos au garage ! (ou payez moi et je développe la même appli en version cycliste)
-    3. **La période :** La saison multijoueur actuelle se déroule sur le mois de septembre **du 1er au 30 septembre 2026**.
+    3. **La période :** La saison multijoueur actuelle se déroule **du 1er Septembre au 31 Octobre 2026**.
     4. **La zone :** Les traces qui ne débloquent aucune case de l'arène ne sont pas considérées pour alléger l'affichage et la mémoire utilisée.
     5. **Pas de double-points :** Repasser dans une case que vous avez déjà conquise ne rapporte aucun point supplémentaire. L'objectif est l'**EXPLORATION**.
     6. **Le mode solo :** Vous pouvez aussi créer votre propre arène et vous comparer aux autres joueurs sur votre terrain. Les règles sont les mêmes que pour le mode multijoueur avec une arène plus grande.
@@ -508,4 +508,4 @@ elif onglet_actif == "GAMERULES":
     3. Uploadez ces fichiers et participez à la compétition: en multijoueur à l'ENSMA ou en solo chez vous!
 
     ### ⚠️ Avertissement :
-    ## Ne vous mettez pas en danger pour débloquer une case, le créateur de ce jeu décline toute responsabilité.""")
+    Ne vous mettez pas en danger pour débloquer une case, le créateur de ce jeu décline toute responsabilité.""")
