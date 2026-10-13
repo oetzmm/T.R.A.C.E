@@ -339,7 +339,7 @@ elif onglet_actif == "SOLO MODE":
             barre_prog_p.empty()
             st.success(f"Traces ajoutées ! Score temporaire : {len(st.session_state.tuiles_p)} tuiles.")
 
-    st.markdown(f"### Affichage carte multijoueur : {n_p} tuiles de {int(tile_length_p*1000)} m de côté")
+    st.markdown(f"### Affichage carte solo : {n_p} tuiles de {int(tile_length_p*1000)} m de côté")
 
     layers_p = []
     colored_tiles_p = set()
