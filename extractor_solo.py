@@ -68,7 +68,7 @@ def analyser_fit_solo(files_upload,center_co,n,tile_length,progress_bar):
                 for data in session:
                     if data.name == 'sport':
                         sport_type = data.value
-                        if sport_type not in ['running','walking','hiking']:
+                        if sport_type not in ['running','walking','hiking','trail_running','mountaineering','track_running','track_field','generic',1,11,17]:
                             print(f'Wrong sport : {data.value}')
                             act_valid = False
                     elif data.name == 'start_time':
