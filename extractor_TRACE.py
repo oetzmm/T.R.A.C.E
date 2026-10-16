@@ -91,33 +91,34 @@ def analyser_fit(files_upload,center_co,n,tile_length,progress_bar):
                         xtile = math.floor((lon - min_lon)/step_lon)
                         ytile = math.floor((lat - min_lat)/step_lat)
                         tiles_conquered.add((xtile,ytile))
-
-            # Si le fichier contient un parcours valide, on crée la ligne (Feature)
-            if len(coordinates) > 1 and (len(tiles_conquered) - nb_cases_avant != 0):
-
-                track_color = [252, 76, 2] # ORANGE par défaut (track_color = [0, 153, 255] # BLEU CLAIR pour le vélo)
-
-                feature = {
-                    "type": "Feature",
-                    "geometry": {
-                        "type": "LineString",
-                        "coordinates": coordinates
-                    },
-                    "properties": {
-                        "nomFichier": file,
-                        "sport": sport_type,
-                        "color": track_color,
-                        "date" : sport_date,
-                    }
-                }
-                geojson_data["features"].append(feature)
-                total_coordinates.append(coordinates)
-                print(f"Track added : {file} | Sport : {sport_type} ({len(coordinates)} points) | Date : {sport_date}")
-            else:
-                # Activitées ignorées car pas de données GPS (ex: natation en piscine, tapis de course)
-                print(f"Ignored (no GPS) : {file} | Sport : {sport_type} | Date : {sport_date}")
+                    else:
+                        # Activitées ignorées car pas de données GPS (ex: natation en piscine, tapis de course)
+                        print(f"Ignored (no GPS) : {file} | Sport : {sport_type} | Date : {sport_date}")
 
         except Exception as e:
             # Fichiers inutilisables ou corrompus
             print(f"Erreur lors de la lecture de {file.name} : {e}")
+
+
+        # Si le fichier contient un parcours valide, on crée la ligne (Feature)
+        if len(coordinates) > 1 and (len(tiles_conquered) - nb_cases_avant != 0):
+
+            track_color = [252, 76, 2] # ORANGE par défaut (track_color = [0, 153, 255] # BLEU CLAIR pour le vélo)
+
+            feature = {
+                "type": "Feature",
+                "geometry": {
+                    "type": "LineString",
+                    "coordinates": coordinates
+                },
+                "properties": {
+                    "nomFichier": file,
+                    "sport": sport_type,
+                    "color": track_color,
+                    "date" : sport_date,
+                }
+            }
+            geojson_data["features"].append(feature)
+            total_coordinates.append(coordinates)
+            print(f"Track added : {file} | Sport : {sport_type} ({len(coordinates)} points) | Date : {sport_date}")
     return tiles_conquered, total_coordinates
