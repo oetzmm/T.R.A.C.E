@@ -63,26 +63,19 @@ def analyser_fit(files_upload,center_co,n,tile_length,progress_bar):
         try:
             # 1. Traitement uniquement pour les extensions .FIT
             # Lecture dans les metadonnées de la session, séléction des activités valides
-            for session in fitfile.get_messages('session'):
-                for data in session:
-                    if data.name == 'sport':
-                        sport_type = data.value
-                        if sport_type not in ['running','walking','hiking','trail_running','mountaineering','track_running','track_field','generic',1,11,17]:
-                            print(f'Wrong sport : {data.value}')
-                            act_valid = False
-                    elif data.name == 'start_time':
-                        sport_date = data.value
-                        if (sport_date.month not in [9,10]) or (sport_date.year != 2026):
-                            print(f'Date not in range : {sport_date.day}/{sport_date.month}/{sport_date.year}')
-                            act_valid = False
-                break
+            nb_cases_avant = len(tiles_conquered)
+            for i, record in enumerate(fitfile.get_messages('record')):
+                if sport_date is None:
+                    sport_date = record.get_value('timestamp')
+                    if (sport_date.month not in [9,10]) or (sport_date.year != 2026):
+                        print(f'Date not in range : {sport_date.day}/{sport_date.month}/{sport_date.year}')
+                        act_valid = False
+                        break
+                if sport_type == "Unknown":
+                    sport_type = record.get_value('activity_type') or record.get_value('sport')
 
             # 3. Extraction des points d'enregistrement ("records")
-            if not act_valid :
-                continue
 
-            nb_cases_avant = len(tiles_conquered)
-            for i,record in enumerate(fitfile.get_messages('record')):
                 if i % 10 != 0:
                     continue  # On ne prend qu'un point sur 10 pour alléger le traitement
                 lat = semicircles_to_degrees(record.get_value('position_lat'))
