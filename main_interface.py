@@ -116,121 +116,120 @@ if onglet_actif == "MULTIPLAYER MODE":
     layers_m = []
     colored_tiles_m = set()
     features_m = []
-    with st.spinner("Chargement de la carte multijoueur..."):
-        # Calque 1 : Traces éphémères du joueur (bleu)
-        if st.session_state.traces_m:
-            colored_tiles_m.update(st.session_state.tuiles_m)
-            for i in st.session_state.traces_m:
-                if len(i) > 1:
-                    features_m.append({
-                        "type": "Feature",
-                        "geometry": {"type": "LineString", "coordinates": i}
-                    })
-            geojson_m = {"type":"FeatureCollection", "features":features_m}
-            layer_ephemere_m = pdk.Layer(
-                "GeoJsonLayer",
-                geojson_m,
-                pickable=False,
-                stroked=True,
-                filled=False,
-                get_line_color=[0, 191, 255], 
-                get_line_width=4,          
-                line_width_min_pixels=2,   
-                line_width_max_pixels=10,  
-            )
-            layers_m.append(layer_ephemere_m)
+    # Calque 1 : Traces éphémères du joueur (bleu)
+    if st.session_state.traces_m:
+        colored_tiles_m.update(st.session_state.tuiles_m)
+        for i in st.session_state.traces_m:
+            if len(i) > 1:
+                features_m.append({
+                    "type": "Feature",
+                    "geometry": {"type": "LineString", "coordinates": i}
+                })
+        geojson_m = {"type":"FeatureCollection", "features":features_m}
+        layer_ephemere_m = pdk.Layer(
+            "GeoJsonLayer",
+            geojson_m,
+            pickable=False,
+            stroked=True,
+            filled=False,
+            get_line_color=[0, 191, 255], 
+            get_line_width=4,          
+            line_width_min_pixels=2,   
+            line_width_max_pixels=10,  
+        )
+        layers_m.append(layer_ephemere_m)
 
-        st.markdown(f"### Affichage carte multijoueur : {n_m} tuiles de {int(tile_length_m*1000)} m de côté")
-        tous_les_joueurs = list(col_multi.find({}, {"_id": 0}))
-        pseudo_dispo_m = []
-        for joueur in col_multi.find({}, {"pseudo": 1}): 
-            pseudo_dispo_m.append(joueur["pseudo"])
+    st.markdown(f"### Affichage carte multijoueur : {n_m} tuiles de {int(tile_length_m*1000)} m de côté")
+    tous_les_joueurs = list(col_multi.find({}, {"_id": 0}))
+    pseudo_dispo_m = []
+    for joueur in col_multi.find({}, {"pseudo": 1}): 
+        pseudo_dispo_m.append(joueur["pseudo"])
 
-        # Palette de 20 couleurs RGB distinctes
-        palette = [
-            [255, 50, 50],   # 🔴 Rouge clair
-            [255, 220, 0],   # 🟡 Jaune
-            [80, 200, 80],   # 🟢 Vert clair
-            [50, 150, 255],  # 🔵 Bleu
-            [255, 135, 0],   # 🟠 Orange
-            [255, 255, 255], # ⚪ Blanc
-            [180, 50, 220],  # 🟣 Violet
-            [140, 90, 60],   # 🟤 Marron
-            [255, 105, 180], # 🩷 Rose clair
-            [100, 200, 255], # 🩵 Bleu ciel
-            [200, 0, 0],     # 🟥 Rouge sombre
-            [200, 100, 0],   # 🟧 Orange sombre
-            [200, 180, 0],   # 🟨 Ocre
-            [30, 130, 50],   # 🟩 Vert sombre
-            [20, 80, 200],   # 🟦 Bleu sombre
-            [120, 30, 150],  # 🟪 Violet sombre
-            [100, 60, 40],   # 🟫 Marron foncé
-            [170, 170, 170], # 🩶 Gris
-            [130, 130, 130], # 🖤 Gris foncé (adapté au fond noir de la carte)
-            [255, 20, 147]   # 💖 Rose profond
-        ]
-        # 20 Émojis correspondants exactement aux index de la palette
-        emojis = [
-            "🔴", "🟡", "🟢", "🔵", "🟠",
-            "⚪", "🟣", "🟤", "🩷", "🩵", 
-            "🟥", "🟧", "🟨", "🟩", "🟦", 
-            "🟪", "🟫", "🩶", "🖤", "💖"
-        ]
+    # Palette de 20 couleurs RGB distinctes
+    palette = [
+        [255, 50, 50],   # 🔴 Rouge clair
+        [255, 220, 0],   # 🟡 Jaune
+        [80, 200, 80],   # 🟢 Vert clair
+        [50, 150, 255],  # 🔵 Bleu
+        [255, 135, 0],   # 🟠 Orange
+        [255, 255, 255], # ⚪ Blanc
+        [180, 50, 220],  # 🟣 Violet
+        [140, 90, 60],   # 🟤 Marron
+        [255, 105, 180], # 🩷 Rose clair
+        [100, 200, 255], # 🩵 Bleu ciel
+        [200, 0, 0],     # 🟥 Rouge sombre
+        [200, 100, 0],   # 🟧 Orange sombre
+        [200, 180, 0],   # 🟨 Ocre
+        [30, 130, 50],   # 🟩 Vert sombre
+        [20, 80, 200],   # 🟦 Bleu sombre
+        [120, 30, 150],  # 🟪 Violet sombre
+        [100, 60, 40],   # 🟫 Marron foncé
+        [170, 170, 170], # 🩶 Gris
+        [130, 130, 130], # 🖤 Gris foncé (adapté au fond noir de la carte)
+        [255, 20, 147]   # 💖 Rose profond
+    ]
+    # 20 Émojis correspondants exactement aux index de la palette
+    emojis = [
+        "🔴", "🟡", "🟢", "🔵", "🟠",
+        "⚪", "🟣", "🟤", "🩷", "🩵", 
+        "🟥", "🟧", "🟨", "🟩", "🟦", 
+        "🟪", "🟫", "🩶", "🖤", "💖"
+    ]
 
-        if pseudo_dispo_m:
-            colonnes_m = st.columns(len(pseudo_dispo_m))
+    if pseudo_dispo_m:
+        colonnes_m = st.columns(len(pseudo_dispo_m))
 
-            for i, pseudo_m in enumerate(pseudo_dispo_m):
-                color_m = palette[i % len(palette)]
-                emo_m = emojis[i % len(palette)]
+        for i, pseudo_m in enumerate(pseudo_dispo_m):
+            color_m = palette[i % len(palette)]
+            emo_m = emojis[i % len(palette)]
 
-                with colonnes_m[i]:
-                    afficher_joueur_m = st.checkbox(f"{emo_m} {pseudo_m}", value=True)
+            with colonnes_m[i]:
+                afficher_joueur_m = st.checkbox(f"{emo_m} {pseudo_m}", value=True)
 
-                if afficher_joueur_m:
-                    # On cherche le document unique où le pseudo correspond, sans le champ _id
-                    data_joueur_m = next((j for j in tous_les_joueurs if j.get("pseudo") == pseudo_m), None)
+            if afficher_joueur_m:
+                # On cherche le document unique où le pseudo correspond, sans le champ _id
+                data_joueur_m = next((j for j in tous_les_joueurs if j.get("pseudo") == pseudo_m), None)
 
-                    if data_joueur_m:
-                        layer_joueur_m = pdk.Layer(
-                            "GeoJsonLayer",
-                            data_joueur_m,
-                            pickable=False,
-                            stroked=True,
-                            filled=False,
-                            get_line_color=color_m,
-                            get_line_width=4,
-                            line_width_min_pixels=2,
-                            line_width_max_pixels=10,
-                            id=f"layer_{pseudo_m}"
-                            )
-                        layers_m.append(layer_joueur_m)
+                if data_joueur_m:
+                    layer_joueur_m = pdk.Layer(
+                        "GeoJsonLayer",
+                        data_joueur_m,
+                        pickable=False,
+                        stroked=True,
+                        filled=False,
+                        get_line_color=color_m,
+                        get_line_width=4,
+                        line_width_min_pixels=2,
+                        line_width_max_pixels=10,
+                        id=f"layer_{pseudo_m}"
+                        )
+                    layers_m.append(layer_joueur_m)
 
-                        if "tiles_conquered" in data_joueur_m:
-                            tuiles_joueur_m = [tuple(t) if isinstance(t,list) else t for t in data_joueur_m["tiles_conquered"]]
-                            colored_tiles_m.update(tuiles_joueur_m)
+                    if "tiles_conquered" in data_joueur_m:
+                        tuiles_joueur_m = [tuple(t) if isinstance(t,list) else t for t in data_joueur_m["tiles_conquered"]]
+                        colored_tiles_m.update(tuiles_joueur_m)
 
-        grille_data_m = gen_grid(center_co_m, tile_length_m, n_m, colored_tiles_m)
-        
-        # Calque 2 : la grille colorée selon les tuiles conquises
-        if grille_data_m:
-            layer_grille_m = pdk.Layer(
-                "GeoJsonLayer",
-                grille_data_m,
-                pickable=False,
-                stroked=True,
-                filled=True,
-                get_line_color=[255,255,255,40],
-                get_fill_color="properties.fill_color",
-                get_line_width=1,
-                line_width_min_pixels=1,
-            )
-            layers_m.insert(0, layer_grille_m)
+    grille_data_m = gen_grid(center_co_m, tile_length_m, n_m, colored_tiles_m)
+    
+    # Calque 2 : la grille colorée selon les tuiles conquises
+    if grille_data_m:
+        layer_grille_m = pdk.Layer(
+            "GeoJsonLayer",
+            grille_data_m,
+            pickable=False,
+            stroked=True,
+            filled=True,
+            get_line_color=[255,255,255,40],
+            get_fill_color="properties.fill_color",
+            get_line_width=1,
+            line_width_min_pixels=1,
+        )
+        layers_m.insert(0, layer_grille_m)
 
-        # AFFICHAGE
-        view_state_m = pdk.ViewState(latitude=center_lat, longitude=center_lon, zoom=10, min_zoom=1.5, max_zoom=20, pitch=0, bearing=0)
-        r_m = pdk.Deck(layers=layers_m, initial_view_state=view_state_m, map_provider="carto", map_style="dark")
-        st.pydeck_chart(r_m)
+    # AFFICHAGE
+    view_state_m = pdk.ViewState(latitude=center_lat, longitude=center_lon, zoom=10, min_zoom=1.5, max_zoom=20, pitch=0, bearing=0)
+    r_m = pdk.Deck(layers=layers_m, initial_view_state=view_state_m, map_provider="carto", map_style="dark")
+    st.pydeck_chart(r_m)
 
     # --- SAUVEGARDE DÉFINITIVE ---
     st.markdown("---")
