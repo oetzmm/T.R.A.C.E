@@ -74,6 +74,10 @@ def analyser_fit(files_upload,center_co,n,tile_length,progress_bar):
                 if sport_type == "Unknown":
                     sport_type = record.get_value('activity_type') or record.get_value('sport')
 
+                if sport_type not in ["running", "hiking", "walking", "trail_running","1"]:
+                    print(f"Activity type not valid : {sport_type}")
+                    act_valid = False
+                    break
             # 3. Extraction des points d'enregistrement ("records")
 
                 if i % 10 != 0:
