@@ -102,6 +102,8 @@ if onglet_actif == "MULTIPLAYER MODE":
 
     if external_files_m and bouton_analyse_m:
         barre_prog_m = st.progress(0)
+        st.session_state.tuiles_m.clear()
+        st.session_state.traces_m.clear()
         with st.spinner("Analyse des traces en cours..."):
             tuiles_m, traces_m = analyser_fit(external_files_m, center_co_m, n_m, tile_length_m, barre_prog_m)
 
