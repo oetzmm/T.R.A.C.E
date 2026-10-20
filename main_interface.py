@@ -340,146 +340,146 @@ elif onglet_actif == "SOLO MODE":
             barre_prog_p.empty()
             st.success(f"Traces ajoutées ! Score temporaire : {len(st.session_state.tuiles_p)} tuiles.")
 
-st.markdown(f"### Affichage carte solo : {n_p} tuiles de {int(tile_length_p*1000)} m de côté")
+    st.markdown(f"### Affichage carte solo : {n_p} tuiles de {int(tile_length_p*1000)} m de côté")
 
-    # --- NOUVEAU : MENU DÉROULANT DES PERFORMANCES SAUVEGARDÉES ---
-pseudos_dispo_p = []
-if choix_arene != "Nouvelle arène":
-    # On récupère tous les joueurs ayant enregistré un score sur CETTE arène précise
-    for doc in col_perso.find({"lieu": choix_arene}, {"pseudo": 1}):
-        pseudos_dispo_p.append(doc["pseudo"])
-
-option_par_defaut = "Traces temporaires uniquement"
-if pseudos_dispo_p:
-    joueur_a_afficher = st.selectbox("👀 Voir une performance enregistrée sur cette arène :", options=[option_par_defaut] + pseudos_dispo_p)
-else:
-    joueur_a_afficher = option_par_defaut
+        # --- NOUVEAU : MENU DÉROULANT DES PERFORMANCES SAUVEGARDÉES ---
+    pseudos_dispo_p = []
     if choix_arene != "Nouvelle arène":
-        st.info("Aucune performance enregistrée sur cette arène pour le moment.")
+        # On récupère tous les joueurs ayant enregistré un score sur CETTE arène précise
+        for doc in col_perso.find({"lieu": choix_arene}, {"pseudo": 1}):
+            pseudos_dispo_p.append(doc["pseudo"])
 
-layers_p = []
-colored_tiles_p = set()
-colored_tiles_p.update(st.session_state.tuiles_p)
-features_p = []
+    option_par_defaut = "Traces temporaires uniquement"
+    if pseudos_dispo_p:
+        joueur_a_afficher = st.selectbox("👀 Voir une performance enregistrée sur cette arène :", options=[option_par_defaut] + pseudos_dispo_p)
+    else:
+        joueur_a_afficher = option_par_defaut
+        if choix_arene != "Nouvelle arène":
+            st.info("Aucune performance enregistrée sur cette arène pour le moment.")
 
-        
-# --- NOUVEAU : CALQUE DE LA PERFORMANCE SAUVEGARDÉE (EN VERT) ---
-if joueur_a_afficher != option_par_defaut:
-    data_joueur_p = col_perso.find_one({"pseudo": joueur_a_afficher, "lieu": choix_arene}, {"_id": 0})
-    if data_joueur_p:
-        layer_joueur_p = pdk.Layer(
+    layers_p = []
+    colored_tiles_p = set()
+    colored_tiles_p.update(st.session_state.tuiles_p)
+    features_p = []
+
+            
+    # --- NOUVEAU : CALQUE DE LA PERFORMANCE SAUVEGARDÉE (EN VERT) ---
+    if joueur_a_afficher != option_par_defaut:
+        data_joueur_p = col_perso.find_one({"pseudo": joueur_a_afficher, "lieu": choix_arene}, {"_id": 0})
+        if data_joueur_p:
+            layer_joueur_p = pdk.Layer(
+                "GeoJsonLayer",
+                data_joueur_p,
+                pickable=False,
+                stroked=True,
+                filled=False,
+                get_line_color=[76, 175, 80], # Vert pour distinguer de la trace temporaire
+                get_line_width=4,          
+                line_width_min_pixels=2,   
+                line_width_max_pixels=10,  
+            )
+            layers_p.append(layer_joueur_p)
+            
+            # On ajoute les tuiles de ce joueur à l'ensemble pour colorer la grille
+            if "tiles_conquered" in data_joueur_p:
+                tuiles_joueur_p = [tuple(t) if isinstance(t,list) else t for t in data_joueur_p["tiles_conquered"]]
+                colored_tiles_p.update(tuiles_joueur_p)
+    # ----------------------------------------------------
+
+        # Calque 1 : Traces éphémères du joueur (Orange)
+        for i in st.session_state.traces_p:
+            if len(i) > 1:
+                features_p.append({
+                    "type": "Feature",
+                    "geometry": {"type": "LineString", "coordinates": i}
+                })
+        geojson_p = {"type":"FeatureCollection", "features":features_p}
+        layer_ephemere_p = pdk.Layer(
             "GeoJsonLayer",
-            data_joueur_p,
+            geojson_p,
             pickable=False,
             stroked=True,
             filled=False,
-            get_line_color=[76, 175, 80], # Vert pour distinguer de la trace temporaire
+            get_line_color=[255, 87, 34], # Orange
             get_line_width=4,          
             line_width_min_pixels=2,   
             line_width_max_pixels=10,  
         )
-        layers_p.append(layer_joueur_p)
+        layers_p.append(layer_ephemere_p)
+
+        grille_data_p = gen_grid(st.session_state.center_p, tile_length_p, n_p, colored_tiles_p)
         
-        # On ajoute les tuiles de ce joueur à l'ensemble pour colorer la grille
-        if "tiles_conquered" in data_joueur_p:
-            tuiles_joueur_p = [tuple(t) if isinstance(t,list) else t for t in data_joueur_p["tiles_conquered"]]
-            colored_tiles_p.update(tuiles_joueur_p)
-# ----------------------------------------------------
+        # Calque 2 : la grille colorée selon les tuiles conquises
+        if grille_data_p:
+            layer_grille_p = pdk.Layer(
+                "GeoJsonLayer",
+                grille_data_p,
+                pickable=False,
+                stroked=True,
+                filled=True,
+                get_line_color=[255,255,255,40],
+                get_fill_color="properties.fill_color",
+                get_line_width=1,
+                line_width_min_pixels=1,
+            )
+            layers_p.insert(0, layer_grille_p)
 
-    # Calque 1 : Traces éphémères du joueur (Orange)
-    for i in st.session_state.traces_p:
-        if len(i) > 1:
-            features_p.append({
-                "type": "Feature",
-                "geometry": {"type": "LineString", "coordinates": i}
-            })
-    geojson_p = {"type":"FeatureCollection", "features":features_p}
-    layer_ephemere_p = pdk.Layer(
-        "GeoJsonLayer",
-        geojson_p,
-        pickable=False,
-        stroked=True,
-        filled=False,
-        get_line_color=[255, 87, 34], # Orange
-        get_line_width=4,          
-        line_width_min_pixels=2,   
-        line_width_max_pixels=10,  
-    )
-    layers_p.append(layer_ephemere_p)
+        # Paramétrage de la caméra initiale sur les coordonnées perso
+        view_state_p = pdk.ViewState(latitude=st.session_state.center_p[0], longitude=st.session_state.center_p[1], zoom=10, min_zoom=1.5, max_zoom=20, pitch=0, bearing=0)
+        r_p = pdk.Deck(layers=layers_p, initial_view_state=view_state_p, map_provider="carto", map_style="dark")
+        st.pydeck_chart(r_p)
 
-    grille_data_p = gen_grid(st.session_state.center_p, tile_length_p, n_p, colored_tiles_p)
-    
-    # Calque 2 : la grille colorée selon les tuiles conquises
-    if grille_data_p:
-        layer_grille_p = pdk.Layer(
-            "GeoJsonLayer",
-            grille_data_p,
-            pickable=False,
-            stroked=True,
-            filled=True,
-            get_line_color=[255,255,255,40],
-            get_fill_color="properties.fill_color",
-            get_line_width=1,
-            line_width_min_pixels=1,
-        )
-        layers_p.insert(0, layer_grille_p)
+    # --- SAUVEGARDE DÉFINITIVE (PERSO) ---
+    st.markdown("---")
+    st.markdown("### 3️⃣ Sauvegarde")
 
-    # Paramétrage de la caméra initiale sur les coordonnées perso
-    view_state_p = pdk.ViewState(latitude=st.session_state.center_p[0], longitude=st.session_state.center_p[1], zoom=10, min_zoom=1.5, max_zoom=20, pitch=0, bearing=0)
-    r_p = pdk.Deck(layers=layers_p, initial_view_state=view_state_p, map_provider="carto", map_style="dark")
-    st.pydeck_chart(r_p)
-
-# --- SAUVEGARDE DÉFINITIVE (PERSO) ---
-st.markdown("---")
-st.markdown("### 3️⃣ Sauvegarde")
-
-pseudo_p = st.text_input("Nom:", key='pseudo_p')
-if choix_arene == "Nouvelle arène":
-    lieu_p = st.text_input("Nom de l'arène:", key='lieu_p')
-else:
-    lieu_p = choix_arene
-    st.info(f"Localisation : {lieu_p}")    
-
-if st.button("Sauvegarder"):
-    if pseudo_p and lieu_p and features_p:
-        with st.spinner("Sauvegarde en cours..."):
-            tuiles_tot_p = set(st.session_state.tuiles_p)
-            traces_tot_p = features_p.copy()
-
-            # On cherche dans la BDD avec le pseudo ET le lieu
-            anciennes_data_p = col_perso.find_one({"pseudo": pseudo_p, "lieu": lieu_p}, {"_id": 0})
-
-            if anciennes_data_p:
-                if "tiles_conquered" in anciennes_data_p:
-                    anciennes_tuiles_p = [tuple(t) if isinstance(t,list) else t for t in anciennes_data_p["tiles_conquered"]]
-                    tuiles_tot_p.update(anciennes_tuiles_p)
-                    
-                if "features" in anciennes_data_p:
-                    traces_tot_p.extend(anciennes_data_p["features"])
-            
-            geojson_final_p = {
-                "pseudo": pseudo_p, # Obligatoire pour MongoDB
-                "lieu": lieu_p,     # Obligatoire pour différencier les arènes
-                "center": st.session_state.center_p, # Pour retrouver l'arène plus tard
-                "type": "FeatureCollection",
-                "score": len(tuiles_tot_p),
-                "tiles_conquered": list(tuiles_tot_p),
-                "features": traces_tot_p
-            }
-            
-            # Remplacement/Création en cloud
-            col_perso.replace_one({"pseudo": pseudo_p, "lieu": lieu_p}, geojson_final_p, upsert=True)
-
-        st.success(f"Progression sauvegardée ! Score total de {pseudo_p} à {lieu_p} : {len(tuiles_tot_p)} tuiles.")
-        
-        st.session_state.tuiles_p.clear()
-        st.session_state.traces_p.clear()
-        
-        time.sleep(2)
-        st.rerun()
-        
+    pseudo_p = st.text_input("Nom:", key='pseudo_p')
+    if choix_arene == "Nouvelle arène":
+        lieu_p = st.text_input("Nom de l'arène:", key='lieu_p')
     else:
-        st.warning("Merci d'entrer une activité valide (lieu/période), un nom et un lieu avant d'enregistrer.")
+        lieu_p = choix_arene
+        st.info(f"Localisation : {lieu_p}")    
+
+    if st.button("Sauvegarder"):
+        if pseudo_p and lieu_p and features_p:
+            with st.spinner("Sauvegarde en cours..."):
+                tuiles_tot_p = set(st.session_state.tuiles_p)
+                traces_tot_p = features_p.copy()
+
+                # On cherche dans la BDD avec le pseudo ET le lieu
+                anciennes_data_p = col_perso.find_one({"pseudo": pseudo_p, "lieu": lieu_p}, {"_id": 0})
+
+                if anciennes_data_p:
+                    if "tiles_conquered" in anciennes_data_p:
+                        anciennes_tuiles_p = [tuple(t) if isinstance(t,list) else t for t in anciennes_data_p["tiles_conquered"]]
+                        tuiles_tot_p.update(anciennes_tuiles_p)
+                        
+                    if "features" in anciennes_data_p:
+                        traces_tot_p.extend(anciennes_data_p["features"])
+                
+                geojson_final_p = {
+                    "pseudo": pseudo_p, # Obligatoire pour MongoDB
+                    "lieu": lieu_p,     # Obligatoire pour différencier les arènes
+                    "center": st.session_state.center_p, # Pour retrouver l'arène plus tard
+                    "type": "FeatureCollection",
+                    "score": len(tuiles_tot_p),
+                    "tiles_conquered": list(tuiles_tot_p),
+                    "features": traces_tot_p
+                }
+                
+                # Remplacement/Création en cloud
+                col_perso.replace_one({"pseudo": pseudo_p, "lieu": lieu_p}, geojson_final_p, upsert=True)
+
+            st.success(f"Progression sauvegardée ! Score total de {pseudo_p} à {lieu_p} : {len(tuiles_tot_p)} tuiles.")
+            
+            st.session_state.tuiles_p.clear()
+            st.session_state.traces_p.clear()
+            
+            time.sleep(2)
+            st.rerun()
+            
+        else:
+            st.warning("Merci d'entrer une activité valide (lieu/période), un nom et un lieu avant d'enregistrer.")
 
 # =========================================================================================
 # =========================================================================================
