@@ -340,14 +340,54 @@ elif onglet_actif == "SOLO MODE":
             barre_prog_p.empty()
             st.success(f"Traces ajoutées ! Score temporaire : {len(st.session_state.tuiles_p)} tuiles.")
 
-    st.markdown(f"### Affichage carte solo : {n_p} tuiles de {int(tile_length_p*1000)} m de côté")
+st.markdown(f"### Affichage carte solo : {n_p} tuiles de {int(tile_length_p*1000)} m de côté")
+
+    # --- NOUVEAU : MENU DÉROULANT DES PERFORMANCES SAUVEGARDÉES ---
+    pseudos_dispo_p = []
+    if choix_arene != "Nouvelle arène":
+        # On récupère tous les joueurs ayant enregistré un score sur CETTE arène précise
+        for doc in col_perso.find({"lieu": choix_arene}, {"pseudo": 1}):
+            pseudos_dispo_p.append(doc["pseudo"])
+
+    option_par_defaut = "Traces temporaires uniquement"
+    if pseudos_dispo_p:
+        joueur_a_afficher = st.selectbox("👀 Voir une performance enregistrée sur cette arène :", options=[option_par_defaut] + pseudos_dispo_p)
+    else:
+        joueur_a_afficher = option_par_defaut
+        if choix_arene != "Nouvelle arène":
+            st.info("Aucune performance enregistrée sur cette arène pour le moment.")
 
     layers_p = []
     colored_tiles_p = set()
     colored_tiles_p.update(st.session_state.tuiles_p)
     features_p = []
-    # Calque 1 : Traces éphémères du joueur (Orange)
+    
     with st.spinner("Chargement de la carte solo..."):
+        
+        # --- NOUVEAU : CALQUE DE LA PERFORMANCE SAUVEGARDÉE (EN VERT) ---
+        if joueur_a_afficher != option_par_defaut:
+            data_joueur_p = col_perso.find_one({"pseudo": joueur_a_afficher, "lieu": choix_arene}, {"_id": 0})
+            if data_joueur_p:
+                layer_joueur_p = pdk.Layer(
+                    "GeoJsonLayer",
+                    data_joueur_p,
+                    pickable=False,
+                    stroked=True,
+                    filled=False,
+                    get_line_color=[76, 175, 80], # Vert pour distinguer de la trace temporaire
+                    get_line_width=4,          
+                    line_width_min_pixels=2,   
+                    line_width_max_pixels=10,  
+                )
+                layers_p.append(layer_joueur_p)
+                
+                # On ajoute les tuiles de ce joueur à l'ensemble pour colorer la grille
+                if "tiles_conquered" in data_joueur_p:
+                    tuiles_joueur_p = [tuple(t) if isinstance(t,list) else t for t in data_joueur_p["tiles_conquered"]]
+                    colored_tiles_p.update(tuiles_joueur_p)
+        # ----------------------------------------------------
+
+        # Calque 1 : Traces éphémères du joueur (Orange)
         for i in st.session_state.traces_p:
             if len(i) > 1:
                 features_p.append({
