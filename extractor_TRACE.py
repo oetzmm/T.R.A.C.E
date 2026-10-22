@@ -61,6 +61,99 @@ def analyser_fit(files_upload,center_co,n,tile_length,progress_bar):
         act_valid = True
 
         try:
+            nb_cases_avant = len(tiles_conquered)
+            record_count = 0
+            date_validated = False
+            
+            # On lit TOUS les messages un par un
+            for message in fitfile.get_messages():
+                
+                # --- 1. LECTURE DE L'EN-TÊTE (Idéal pour Garmin et Polar) ---
+                if message.name == 'session':
+                    if sport_type == "Unknown":
+                        val = message.get_value('sport') or message.get_value('sub_sport')
+                        if val is not None:
+                            sport_type = str(val)
+                            
+                    if sport_date is None:
+                        sport_date = message.get_value('start_time')
+                        
+                # --- 2. LECTURE DES POINTS GPS (Idéal pour Coros) ---
+                elif message.name == 'record':
+                    
+                    # Fallback date : si absente de l'en-tête
+                    if sport_date is None:
+                        sport_date = message.get_value('timestamp')
+                        
+                    # Validation UNIQUE de la date pour le mode Multi
+                    if sport_date is not None and not date_validated:
+                        if (sport_date.month not in [9,10]) or (sport_date.year != 2026):
+                            print(f'Date hors délai : {sport_date}')
+                            act_valid = False
+                            break
+                        date_validated = True
+
+                    # Fallback sport : si absent de l'en-tête
+                    if sport_type == "Unknown":
+                        val = message.get_value('activity_type') or message.get_value('sport')
+                        if val is not None:
+                            sport_type = str(val)
+
+                    # Vérification du sport
+                    if sport_type != "Unknown" and sport_type not in ["running", "hiking", "walking", "trail_running", "1"]:
+                        print(f"Sport invalide : {sport_type}")
+                        act_valid = False
+                        break
+
+                    # Sous-échantillonnage (1 point sur 10)
+                    record_count += 1
+                    if record_count % 10 != 0:
+                        continue
+                        
+                    lat_val = message.get_value('position_lat')
+                    lon_val = message.get_value('position_long')
+
+                    if lat_val is not None and lon_val is not None:
+                        lat = semicircles_to_degrees(lat_val)
+                        lon = semicircles_to_degrees(lon_val)
+                        
+                        coordinates.append([lon, lat])
+                        
+                        if min_lat <= lat <= max_lat and min_lon <= lon <= max_lon:
+                            xtile = math.floor((lon - min_lon)/step_lon)
+                            ytile = math.floor((lat - min_lat)/step_lat)
+                            tiles_conquered.add((xtile,ytile))
+
+        except Exception as e:
+            # Si le fichier plante au milieu (typique Coros sur ses champs propriétaires),
+            # le code atterrit ici, ignore le crash, et passe directement à la sauvegarde finale.
+            pass
+
+        # N'oublie pas : ce bloc doit bien être EN DEHORS du try/except !
+        if act_valid and len(coordinates) > 1 and (len(tiles_conquered) - nb_cases_avant != 0):
+            track_color = [252, 76, 2] # ORANGE
+
+            feature = {
+                "type": "Feature",
+                "geometry": {
+                    "type": "LineString",
+                    "coordinates": coordinates
+                },
+                "properties": {
+                    "nomFichier": file.name,
+                    "sport": sport_type,
+                    "color": track_color,
+                    "date" : str(sport_date),
+                }
+            }
+            geojson_data["features"].append(feature)
+            total_coordinates.append(coordinates)
+            print(f"Track added : {file.name} | Sport : {sport_type} ({len(coordinates)} points)")
+         
+        
+        
+        
+""" try:
             # 1. Traitement uniquement pour les extensions .FIT
             # Lecture dans les metadonnées de la session, séléction des activités valides
             nb_cases_avant = len(tiles_conquered)
@@ -121,4 +214,4 @@ def analyser_fit(files_upload,center_co,n,tile_length,progress_bar):
             geojson_data["features"].append(feature)
             total_coordinates.append(coordinates)
             print(f"Track added : {file} | Sport : {sport_type} ({len(coordinates)} points) | Date : {sport_date}")
-    return tiles_conquered, total_coordinates
+    return tiles_conquered, total_coordinates"""
