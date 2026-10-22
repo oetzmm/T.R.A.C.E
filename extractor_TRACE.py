@@ -149,3 +149,4 @@ def analyser_fit(files_upload,center_co,n,tile_length,progress_bar):
             geojson_data["features"].append(feature)
             total_coordinates.append(coordinates)
             print(f"Track added : {file.name} | Sport : {sport_type} ({len(coordinates)} points)")
+    return tiles_conquered, total_coordinates
