@@ -287,7 +287,7 @@ elif onglet_actif == "SOLO MODE":
     col_gauche, col_droite = st.columns(2)
 
     # Droite : arène
-    with col_droite:
+    with col_gauche:
         st.markdown("### 1️⃣ Définition de l'arène :")
         used_arenes = {}
         for doc in col_perso.find({"center": {"$exists": True}},{"lieu":1, "center": 1, "_id":0}):
@@ -322,7 +322,7 @@ elif onglet_actif == "SOLO MODE":
         center_co_p = st.session_state.center_p
 
     # Gauche : upload
-    with col_gauche:
+    with col_droite:
         st.markdown("### 2️⃣ Ajoute tes traces")
         with st.form("form_upload_solo", border=False):
             external_files_p = st.file_uploader(
@@ -484,6 +484,7 @@ elif onglet_actif == "SOLO MODE":
             
             st.session_state.tuiles_p.clear()
             st.session_state.traces_p.clear()
+            colored_tiles_p.update(st.session_state.tuiles_p)
             st.session_state.last_choix_arene = lieu_p
             
             time.sleep(2)
