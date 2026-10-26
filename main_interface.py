@@ -35,7 +35,6 @@ max_lat_m = center_lat + (n_m * step_lat_m * 0.5)
 min_lon_m = center_lon - (n_m * step_lon_m * 0.5)
 max_lon_m = center_lon + (n_m * step_lon_m * 0.5)
 
-
 # Variables pour le mode solo
 
 tile_length_p = 0.5 # km
