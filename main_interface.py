@@ -2,8 +2,7 @@ import streamlit as st
 import pydeck as pdk
 import math
 import time
-from extractor_TRACE import analyser_fit
-from extractor_solo import analyser_fit_solo
+from extractor import analyser_fit
 from basegrid import gen_grid
 
 from pymongo import MongoClient
@@ -105,7 +104,7 @@ if onglet_actif == "MULTIPLAYER MODE":
         st.session_state.tuiles_m.clear()
         st.session_state.traces_m.clear()
         with st.spinner("Analyse des traces en cours..."):
-            tuiles_m, traces_m = analyser_fit(external_files_m, center_co_m, n_m, tile_length_m, barre_prog_m)
+            tuiles_m, traces_m = analyser_fit(external_files_m, center_co_m, n_m, tile_length_m, barre_prog_m, mode = "multi")
 
             st.session_state.tuiles_m.update(tuiles_m)
             st.session_state.traces_m.extend(traces_m)
@@ -283,55 +282,60 @@ elif onglet_actif == "SOLO MODE":
     st.subheader("Mode solo -- A domicile -- De tout temps")
     st.markdown("Ici, tu peux choisir l'arène de ton choix pour te comparer aux autres 'à domicile'.")
 
-    # 1. Saisie des coordonnées
-    st.markdown("### 1️⃣ Définition de l'arène :")
+    # --- Définition des deux colonnes ---
+    col_gauche, col_droite = st.columns(2)
 
-    used_arenes = {}
-    for doc in col_perso.find({"center": {"$exists": True}},{"lieu":1, "center": 1, "_id":0}):
-        if doc["lieu"] not in used_arenes:
-            used_arenes[doc["lieu"]] = doc["center"]
-
-    options_menu = ["Nouvelle arène"] + list(used_arenes.keys())
-
-    choix_arene = st.selectbox("Choisis une arène existante ou crée-en une nouvelle :", options=options_menu, key="select_arene")
-
-    if choix_arene == "Nouvelle arène":
-        col1, col2 = st.columns(2)
-        with col1:
-            lat_perso = st.number_input("Latitude du centre", value=0.00000, format="%.6f", key="lat_p")
-        with col2:
-            lon_perso = st.number_input("Longitude du centre", value=0.00000, format="%.6f", key="lon_p")
+    # Droite : arène
+    with col_droite:
+        st.markdown("### 1️⃣ Définition de l'arène :")
+        used_arenes = {}
+        for doc in col_perso.find({"center": {"$exists": True}},{"lieu":1, "center": 1, "_id":0}):
+            if doc["lieu"] not in used_arenes:
+                used_arenes[doc["lieu"]] = doc["center"]
+        options_menu = ["Nouvelle arène"] + list(used_arenes.keys())
+        choix_arene = st.selectbox("Choisis une arène existante ou crée-en une nouvelle :", options=options_menu, key="select_arene")
+        
+        if choix_arene == "Nouvelle arène":
+            col1, col2 = st.columns(2)
+            with col1:
+                lat_perso = st.number_input("Latitude du centre", value=0.00000, format="%.6f", key="lat_p")
+            with col2:
+                lon_perso = st.number_input("Longitude du centre", value=0.00000, format="%.6f", key="lon_p")
     
-        if st.button("Créer mon arène", type="primary"):
-            st.session_state.center_p = (lat_perso, lon_perso)
-            st.session_state.tuiles_p.clear()
-            st.session_state.traces_p.clear()
-    else:
-        coords = used_arenes.get(choix_arene, (0.00000, 0.00000))
+            if st.button("Créer mon arène", type="primary"):
+                st.session_state.center_p = (lat_perso, lon_perso)
+                st.session_state.tuiles_p.clear()
+                st.session_state.traces_p.clear()
+                st.session_state.last_choix_arene = "Nouvelle arène"
+        else:
+            coords = tuple(used_arenes.get(choix_arene, (0.00000, 0.00000)))
+            # Actualisation auto lors du changement de menu
+            if st.session_state.last_choix_arene != choix_arene:
+                st.session_state.center_p = coords
+                st.session_state.tuiles_p.clear()
+                st.session_state.traces_p.clear()
+                st.session_state.last_choix_arene = choix_arene
 
-        if st.button("Rafraîchir l'arène", type="primary"):
-            st.session_state.center_p = tuple(coords)
-            st.session_state.tuiles_p.clear()
-            st.session_state.traces_p.clear()
+            st.info(f"{choix_arene} (Centre : {coords[0]:.6f}, {coords[1]:.6f})")
 
-        st.info(f"{choix_arene} (Centre : {coords[0]:.6f}, {coords[1]:.6f})")
+        center_co_p = st.session_state.center_p
 
-    center_co_p = st.session_state.center_p
-
-    st.markdown("### 2️⃣ Ajoute tes traces")
-    with st.form("form_upload_solo", border=False):
-        external_files_p = st.file_uploader(
-                "Ajoute tes fichiers .fit",
+    # Gauche : upload
+    with col_gauche:
+        st.markdown("### 2️⃣ Ajoute tes traces")
+        with st.form("form_upload_solo", border=False):
+            external_files_p = st.file_uploader(
+                "Ajoute tes fichiers .fit ou .fit.gz",
                 type=["fit","fit.gz"],
                 accept_multiple_files=True,
                 key="upload_perso")
         
-        bouton_analyse_p = st.form_submit_button("Analyser ces fichiers")
+            bouton_analyse_p = st.form_submit_button("Analyser ces fichiers")
 
-    if external_files_p and bouton_analyse_p:
+        if external_files_p and bouton_analyse_p:
             barre_prog_p = st.progress(0)
             with st.spinner("Analyse des traces en cours..."):
-                tuiles_p, traces_p = analyser_fit_solo(external_files_p, center_co_p, n_p, tile_length_p, barre_prog_p)
+                tuiles_p, traces_p = analyser_fit(external_files_p, center_co_p, n_p, tile_length_p, barre_prog_p, mode="solo")
 
                 st.session_state.tuiles_p.update(tuiles_p)
                 st.session_state.traces_p.extend(traces_p)
@@ -339,19 +343,21 @@ elif onglet_actif == "SOLO MODE":
 
             barre_prog_p.empty()
             st.success(f"Traces ajoutées ! Score temporaire : {len(st.session_state.tuiles_p)} tuiles.")
+    st.divider() # Ligne de séparation
 
-    st.markdown(f"### Affichage carte solo : {n_p} tuiles de {int(tile_length_p*1000)} m de côté")
+    # --- AFFICHAGE CARTE SOLO ---
+    st.markdown(f"### 🗺️ Carte solo : {n_p} tuiles de {int(tile_length_p*1000)} m de côté")
 
-        # --- NOUVEAU : MENU DÉROULANT DES PERFORMANCES SAUVEGARDÉES ---
+    # --- MENU DÉROULANT DES PERFORMANCES SAUVEGARDÉES ---
     pseudos_dispo_p = []
     if choix_arene != "Nouvelle arène":
         # On récupère tous les joueurs ayant enregistré un score sur CETTE arène précise
         for doc in col_perso.find({"lieu": choix_arene}, {"pseudo": 1}):
             pseudos_dispo_p.append(doc["pseudo"])
 
-    option_par_defaut = "Traces temporaires uniquement"
+    option_par_defaut = "Traces temporaires"
     if pseudos_dispo_p:
-        joueur_a_afficher = st.selectbox("👀 Voir une performance enregistrée sur cette arène :", options=[option_par_defaut] + pseudos_dispo_p)
+        joueur_a_afficher = st.selectbox("Voir une performance enregistrée sur cette arène :", options=[option_par_defaut] + pseudos_dispo_p)
     else:
         joueur_a_afficher = option_par_defaut
         if choix_arene != "Nouvelle arène":
@@ -362,54 +368,54 @@ elif onglet_actif == "SOLO MODE":
     colored_tiles_p.update(st.session_state.tuiles_p)
     features_p = []
 
-            
-    # --- NOUVEAU : CALQUE DE LA PERFORMANCE SAUVEGARDÉE (EN VERT) ---
-    if joueur_a_afficher != option_par_defaut:
-        data_joueur_p = col_perso.find_one({"pseudo": joueur_a_afficher, "lieu": choix_arene}, {"_id": 0})
-        if data_joueur_p:
-            layer_joueur_p = pdk.Layer(
-                "GeoJsonLayer",
-                data_joueur_p,
-                pickable=False,
-                stroked=True,
-                filled=False,
-                get_line_color=[76, 175, 80], # Vert pour distinguer de la trace temporaire
-                get_line_width=4,          
-                line_width_min_pixels=2,   
-                line_width_max_pixels=10,  
-            )
-            layers_p.append(layer_joueur_p)
-            
-            # On ajoute les tuiles de ce joueur à l'ensemble pour colorer la grille
-            if "tiles_conquered" in data_joueur_p:
-                tuiles_joueur_p = [tuple(t) if isinstance(t,list) else t for t in data_joueur_p["tiles_conquered"]]
-                colored_tiles_p.update(tuiles_joueur_p)
+    with st.spinner("Chargement de la carte..."):            
+        # --- CALQUE 1 : TRACE ENREGISTRÉE ---
+        if joueur_a_afficher != option_par_defaut:
+            data_joueur_p = col_perso.find_one({"pseudo": joueur_a_afficher, "lieu": choix_arene}, {"_id": 0})
+            if data_joueur_p and data_joueur_p.get("features"):
+                layer_joueur_p = pdk.Layer(
+                    "GeoJsonLayer",
+                    data_joueur_p,
+                    pickable=False,
+                    stroked=True,
+                    filled=False,
+                    get_line_color=[76, 175, 80], # Vert pour distinguer de la trace temporaire
+                    get_line_width=4,          
+                    line_width_min_pixels=2,   
+                    line_width_max_pixels=10,  
+                )
+                layers_p.append(layer_joueur_p)
+                if "tiles_conquered" in data_joueur_p:
+                    tuiles_joueur_p = [tuple(t) if isinstance(t,list) else t for t in data_joueur_p["tiles_conquered"]]
+                    colored_tiles_p.update(tuiles_joueur_p)
     # ----------------------------------------------------
 
-        # Calque 1 : Traces éphémères du joueur (Orange)
+        # Calque 1 : Traces temporaires (Orange)
         for i in st.session_state.traces_p:
             if len(i) > 1:
                 features_p.append({
                     "type": "Feature",
                     "geometry": {"type": "LineString", "coordinates": i}
                 })
-        geojson_p = {"type":"FeatureCollection", "features":features_p}
-        layer_ephemere_p = pdk.Layer(
-            "GeoJsonLayer",
-            geojson_p,
-            pickable=False,
-            stroked=True,
-            filled=False,
-            get_line_color=[255, 87, 34], # Orange
-            get_line_width=4,          
-            line_width_min_pixels=2,   
-            line_width_max_pixels=10,  
-        )
-        layers_p.append(layer_ephemere_p)
+        # Sécurité : créer le calque que si une trace est présente
+        if len(features_p) > 0:
+            geojson_p = {"type":"FeatureCollection", "features":features_p}
+            layer_ephemere_p = pdk.Layer(
+                "GeoJsonLayer",
+                geojson_p,
+                pickable=False,
+                stroked=True,
+                filled=False,
+                get_line_color=[255, 87, 34], # Orange
+                get_line_width=4,          
+                line_width_min_pixels=2,   
+                line_width_max_pixels=10,  
+            )
+            layers_p.append(layer_ephemere_p)
 
+        # Calque 3 : la grille colorée selon les tuiles conquises
         grille_data_p = gen_grid(st.session_state.center_p, tile_length_p, n_p, colored_tiles_p)
         
-        # Calque 2 : la grille colorée selon les tuiles conquises
         if grille_data_p:
             layer_grille_p = pdk.Layer(
                 "GeoJsonLayer",
@@ -433,12 +439,15 @@ elif onglet_actif == "SOLO MODE":
     st.markdown("---")
     st.markdown("### 3️⃣ Sauvegarde")
 
-    pseudo_p = st.text_input("Nom:", key='pseudo_p')
-    if choix_arene == "Nouvelle arène":
-        lieu_p = st.text_input("Nom de l'arène:", key='lieu_p')
-    else:
-        lieu_p = choix_arene
-        st.info(f"Localisation : {lieu_p}")    
+    c_nom,c_lieu = st.columns(2)
+    with c_nom:
+        pseudo_p = st.text_input("Nom:", key='pseudo_p')
+    with c_lieu:
+        if choix_arene == "Nouvelle arène":
+            lieu_p = st.text_input("Nom de votre arène:", key='lieu_p')
+        else:
+            lieu_p = choix_arene
+            st.info(f"Localisation : {lieu_p}")
 
     if st.button("Sauvegarder"):
         if pseudo_p and lieu_p and features_p:
@@ -446,7 +455,7 @@ elif onglet_actif == "SOLO MODE":
                 tuiles_tot_p = set(st.session_state.tuiles_p)
                 traces_tot_p = features_p.copy()
 
-                # On cherche dans la BDD avec le pseudo ET le lieu
+                # Recherche dans la BDD
                 anciennes_data_p = col_perso.find_one({"pseudo": pseudo_p, "lieu": lieu_p}, {"_id": 0})
 
                 if anciennes_data_p:
@@ -474,12 +483,12 @@ elif onglet_actif == "SOLO MODE":
             
             st.session_state.tuiles_p.clear()
             st.session_state.traces_p.clear()
+            st.session_state.last_choix_arene = lieu_p
             
             time.sleep(2)
             st.rerun()
-            
         else:
-            st.warning("Merci d'entrer une activité valide (lieu/période), un nom et un lieu avant d'enregistrer.")
+            st.warning("Merci d'entrer un nom, un lieu et au moins une trace valide avant d'enregistrer.")
 
 # =========================================================================================
 # =========================================================================================
