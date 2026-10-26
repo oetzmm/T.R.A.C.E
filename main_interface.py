@@ -62,6 +62,8 @@ if "traces_p" not in st.session_state:
     st.session_state.traces_p = []
 if "center_p" not in st.session_state:
     st.session_state.center_p = (0.000,0.000)
+if "last_choix_arene" not in st.session_state:
+    st.session_state.last_choix_arene = None
 
 # --- CONFIGURATION DE LA PAGE ---
 st.set_page_config(page_title="T.R.A.C.E. Viewer", page_icon="🏃", layout="wide")
@@ -415,7 +417,7 @@ elif onglet_actif == "SOLO MODE":
 
         # Calque 3 : la grille colorée selon les tuiles conquises
         grille_data_p = gen_grid(st.session_state.center_p, tile_length_p, n_p, colored_tiles_p)
-        
+
         if grille_data_p:
             layer_grille_p = pdk.Layer(
                 "GeoJsonLayer",
