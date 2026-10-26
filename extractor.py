@@ -49,6 +49,7 @@ def analyser_fit(files_upload,center_co,n,tile_length,progress_bar,mode="multi")
         
         # Valeur par défaut si non trouvé
         coordinates = []
+        tuiles_fichier = set()
         sport_type = "Unknown"
         sport_date = None
         act_valid = True
@@ -65,14 +66,24 @@ def analyser_fit(files_upload,center_co,n,tile_length,progress_bar,mode="multi")
                     if val is not None:
                         marque_montre = str(val) # ex: "1" (Garmin), "294" (Coros), "123" (Polar)
 
+                # --- Intercepteur précoce
+                elif message.name == 'sport':
+                    val = message.get_value('sport') or message.get_value('sub_sport')
+                    if val is not None:
+                        sport_type = str(val)
+                        if sport_type not in sports_autorises:
+                            act_valid = False
+                            break
+
                 # --- Lecture d'en-tête (GARMIN/POLAR) ---
                 elif message.name == 'session':
                     if sport_type == "Unknown":
                         val = message.get_value('sport') or message.get_value('sub_sport')
-                        if val is not None: sport_type = str(val)
-                    if sport_type != "Unknown" and sport_type not in sports_autorises:
-                        act_valid = False
-                        break
+                        if val is not None:
+                            sport_type = str(val)
+                            if sport_type not in sports_autorises:
+                                act_valid = False
+                                break
                     if sport_date is None:
                         sport_date = message.get_value('start_time')
 
@@ -106,12 +117,13 @@ def analyser_fit(files_upload,center_co,n,tile_length,progress_bar,mode="multi")
                         if (min_lat <= lat <= max_lat) and (min_lon <= lon <= max_lon):
                             xtile = math.floor((lon - min_lon) / step_lon)
                             ytile = math.floor((lat - min_lat) / step_lat)
-                            tiles_conquered.add((xtile, ytile))
+                            tuiles_fichier.add((xtile, ytile))
         except Exception as e:
             pass  # Ignorer les erreurs de lecture de fichier FIT
 
         # Validation et sauvegarde finale
-        if act_valid and len(coordinates) > 1 and len(tiles_conquered) > nb_cases_avant:
+        if act_valid and (sport_type == "Unknown" or sport_type in sports_autorises) and len(coordinates) > 1 and len(tuiles_fichier) > 0:
+            tiles_conquered.update(tuiles_fichier)
             track_color = [252,76,2] if mode == "multi" else [255, 87, 34] # Orange classique en multi, nuance différente en solo
             
             feature = {
