@@ -31,7 +31,7 @@ def analyser_fit(files_upload,center_co,n,tile_length,progress_bar,mode="multi")
     min_lon = center_lon - (n * step_lon * 0.5)
     max_lon = center_lon + (n * step_lon * 0.5)
 
-    #1 Configuration des règles selon le mode
+    #1 Configuration des règles
     sports_autorises = ['running', 'walking', 'hiking', 'trail_running', 'mountaineering', 'track_running', 'track_field', 'generic', '1', '11', '17']
 
     total_fichiers = len(files_upload)
@@ -44,7 +44,6 @@ def analyser_fit(files_upload,center_co,n,tile_length,progress_bar,mode="multi")
         
         if filename_lower.endswith(".fit.gz"):
             fitfile = FitFile(io.BytesIO(gzip.decompress(file.read())))
-            
         else:
             fitfile = FitFile(file)
         
@@ -71,6 +70,9 @@ def analyser_fit(files_upload,center_co,n,tile_length,progress_bar,mode="multi")
                     if sport_type == "Unknown":
                         val = message.get_value('sport') or message.get_value('sub_sport')
                         if val is not None: sport_type = str(val)
+                    if sport_type != "Unknown" and sport_type not in sports_autorises:
+                        act_valid = False
+                        break
                     if sport_date is None:
                         sport_date = message.get_value('start_time')
 
