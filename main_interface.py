@@ -539,11 +539,37 @@ elif onglet_actif == "LEADERBOARDS":
     
     # --- CLASSEMENT 1 : ARÈNE MULTI ---
     with col_m:
-        st.subheader("🌍 Mode multijoueur -- Arène ENSMA -- Saison 1")
+        st.subheader("🌍 Mode multijoueur -- Arène ENSMA -- Saison 2")
+        tous_les_joueurs_m = list(col_multi.find({}, {"_id": 0}))
         scores_m = []
+        tuiles_eq1 = set()
+        tuiles_eq2 = set()
         # On ne récupère que le pseudo et le score pour aller très vite
-        for doc in col_multi.find({}, {"pseudo": 1, "score": 1, "_id": 0}):
-            scores_m.append({"Joueur": doc["pseudo"], "Score": doc.get("score", 0), "Pourcentage":100*doc.get("score", 0)/n_m**2})
+        for doc in tous_les_joueurs_m:
+            scores_m.append({"Joueur": doc.get("pseudo", "Inconnu"), "Score": doc.get("score", 0), "Équipe": doc.get("equipe", "-")})
+
+        tuiles = [tuple(t) if isinstance(t,list) else t for t in doc.get("tiles_conquered", [])]
+        if doc.get("equipe") == "A1/A2":
+            tuiles_eq1.update(tuiles)
+        elif doc.get("equipe") == "A3":
+            tuiles_eq2.update(tuiles)
+
+        score_eq1 = len(tuiles_eq1)
+        score_eq2 = len(tuiles_eq2)
+
+        if score_eq1>0 or score_eq2>0:
+            st.markdown("### Guerre des territoires")
+            df_eq = [{"Équipe":"A1/A2","Tuiles Uniques":score_eq1,"Conquête":f"{100*score_eq1/n_m**2:.2f}%"},
+                    {"Équipe":"A3","Tuiles Uniques":score_eq2,"Conquête":f"{100*score_eq2/n_m**2:.2f}%"}]
+            df_eq = sorted(df_eq, key=lambda x: x["Tuiles Uniques"], reverse=True)
+            st.dataframe(df_eq, use_container_width=True, hide_index=True)
+            # Barre de progression pour l'équipe en tête
+            leader_score = df_equipes[0]['Tuiles Uniques']
+            st.progress(min(leader_score/n_m**2, 1.0), text=f"Progression de l'équipe leader: {100*leader_score/n_m**2:.2f}%")
+            
+            st.divider()
+
+        st.markdown("### 🏅 Classement Individuel")
         if scores_m:
             scores_m = sorted(scores_m, key=lambda x: x["Score"], reverse=True)
             st.dataframe(scores_m, use_container_width=True, hide_index=True)
