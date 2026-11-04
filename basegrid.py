@@ -1,9 +1,15 @@
 import math
 
-def gen_grid(center_co,tile_length, n_tiles, tuiles_eq1, tuiles_eq2, tuiles_ephemeres=None):
+def gen_grid(center_co,tile_length, n_tiles, tuiles_eq1=None, tuiles_eq2=None, tuiles_ephemeres=None):
     """Génère la grille avec des couleurs spécifiques par équipes pour le mode Multi."""
+    
+    if tuiles_eq1 is None:
+        tuiles_eq1 = set()
+    if tuiles_eq2 is None:
+        tuiles_eq2 = set()
     if tuiles_ephemeres is None:
         tuiles_ephemeres = set()
+
 
     center_lat,center_lon = center_co
     # Calcul de la taille d'une tuile en degrés GPS
