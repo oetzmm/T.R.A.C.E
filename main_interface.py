@@ -239,7 +239,7 @@ if onglet_actif == "MULTIPLAYER MODE":
     with colnom:
         pseudo_m = st.text_input("Nom : ", key='pseudo_multi')
     with coleq:
-        equipe = st.selectbox("Équipe : ", options=["A1/A2", "A3"], key='equipe_multi')
+        equipe = st.selectbox("Équipe : ", options=["A1/A2", "A3", "Aucune"], key='equipe_multi', default_index=2)
 
     
     if st.button("Sauvegarder", key='sauvegarde_multi'):
@@ -261,6 +261,7 @@ if onglet_actif == "MULTIPLAYER MODE":
                 
                 geojson_final_m = {
                     "pseudo": pseudo_m, # Indispensable pour retrouver le joueur plus tard
+                    "equipe" : equipe,
                     "type": "FeatureCollection",
                     "score": len(tuiles_tot_m),
                     "tiles_conquered": list(tuiles_tot_m),
@@ -269,7 +270,7 @@ if onglet_actif == "MULTIPLAYER MODE":
 
                 # Sauvegarde cloud
                 col_multi.replace_one({"pseudo": pseudo_m}, geojson_final_m, upsert=True)       
-            st.success(f"Progression sauvegardée. Score total de {pseudo_m} : {len(tuiles_tot_m)} tuiles.")
+            st.success(f"Progression sauvegardée. Contribution totale de {pseudo_m} : {len(tuiles_tot_m)} tuiles.")
             
             st.session_state.tuiles_m.clear()
             st.session_state.traces_m.clear()
