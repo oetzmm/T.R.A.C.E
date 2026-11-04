@@ -564,7 +564,7 @@ elif onglet_actif == "LEADERBOARDS":
             df_eq = sorted(df_eq, key=lambda x: x["Tuiles Uniques"], reverse=True)
             st.dataframe(df_eq, use_container_width=True, hide_index=True)
             # Barre de progression pour l'équipe en tête
-            leader_score = df_equipes[0]['Tuiles Uniques']
+            leader_score = df_eq[0]['Tuiles Uniques']
             st.progress(min(leader_score/n_m**2, 1.0), text=f"Progression de l'équipe leader: {100*leader_score/n_m**2:.2f}%")
             
             st.divider()
