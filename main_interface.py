@@ -235,7 +235,12 @@ if onglet_actif == "MULTIPLAYER MODE":
     st.markdown("---")
     st.markdown("### 2️⃣ Sauvegarde")
 
-    pseudo_m = st.text_input("Nom : ", key='pseudo_multi')
+    colnom, coleq = st.columns(2)
+    with colnom:
+        pseudo_m = st.text_input("Nom : ", key='pseudo_multi')
+    with coleq:
+        equipe = st.selectbox("Équipe : ", options=["A1/A2", "A3"], key='equipe_multi')
+
     
     if st.button("Sauvegarder", key='sauvegarde_multi'):
         if pseudo_m and features_m:
@@ -347,7 +352,7 @@ elif onglet_actif == "SOLO MODE":
     st.divider() # Ligne de séparation
 
     # --- AFFICHAGE CARTE SOLO ---
-    st.markdown(f"### 🗺️ Carte solo : {n_p} tuiles de {int(tile_length_p*1000)} m de côté")
+    st.markdown(f"### 🗺️ Carte solo : {n_p}x{n_p} tuiles de {int(tile_length_p*1000)} m de côté")
 
     # --- MENU DÉROULANT DES PERFORMANCES SAUVEGARDÉES ---
     pseudos_dispo_p = []
