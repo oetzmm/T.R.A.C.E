@@ -172,7 +172,7 @@ if onglet_actif == "MULTIPLAYER MODE":
                     )
                     layers_m.append(layer_equipe)
 
-    st.markdown("### Vue par joueur").get("equipe") == team_name]
+    st.markdown("### Vue par joueur")
 
     # Palette de 20 couleurs RGB distinctes
     palette = [
