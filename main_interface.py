@@ -142,8 +142,37 @@ if onglet_actif == "MULTIPLAYER MODE":
     st.markdown(f"### Affichage carte multijoueur : {n_m} tuiles de {int(tile_length_m*1000)} m de côté")
     tous_les_joueurs = list(col_multi.find({}, {"_id": 0}))
     pseudo_dispo_m = []
-    for joueur in col_multi.find({}, {"pseudo": 1}): 
-        pseudo_dispo_m.append(joueur["pseudo"])
+    pseudo_dispo_m = [j["pseudo"] for j in tous_les_joueurs if "pseudo" in j]
+
+    st.markdown("### Vue par équipes")
+    c_eq1, c_eq2 = st.columns(2)
+    with c_eq1:
+        afficher_eq1 = st.checkbox("Afficher équipe A1/A2 🟦🟦", value=False)
+    with c_eq2:
+        afficher_eq2 = st.checkbox("Afficher équipe A3 🟥🟥", value=False)
+
+    if afficher_eq1 or afficher_eq2:
+        for team_name, is_checked, team_color in [("A1/A2", afficher_eq1, [50, 150, 255]), ("A3", afficher_eq2, [255, 50, 50])]:
+            if is_checked:
+                traces_equipe = []
+                for j in tous_les_joueurs:
+                    if j.get("equipe") == team_name:
+                        traces_equipe.extend(j.get("features", []))
+                        if "tiles_conquered" in j:
+                            tuiles_equipe = [tuple(t) if isinstance(t,list) else t for t in j["tiles_conquered"]]
+                            colored_tiles_m.update(tuiles_equipe) # Allumage de la grille
+
+                if traces_equipe:
+                    layer_equipe = pdk.Layer(
+                        "GeoJsonLayer",
+                        {"type":"FeatureCollection", "features":traces_equipe},
+                        pickable=False, stroked=True, filled=False,
+                        get_line_color=team_color,
+                        get_line_width=4, line_width_min_pixels=2, line_width_max_pixels=10,
+                    )
+                    layers_m.append(layer_equipe)
+
+    st.markdown("### Vue par joueur").get("equipe") == team_name]
 
     # Palette de 20 couleurs RGB distinctes
     palette = [
@@ -239,7 +268,7 @@ if onglet_actif == "MULTIPLAYER MODE":
     with colnom:
         pseudo_m = st.text_input("Nom : ", key='pseudo_multi')
     with coleq:
-        equipe = st.selectbox("Équipe : ", options=["A1/A2", "A3", "Aucune"], key='equipe_multi', default = "Aucune")
+        equipe = st.selectbox("Équipe : ", options=["Aucune", "A1/A2", "A3"], key='equipe_multi')
 
     
     if st.button("Sauvegarder", key='sauvegarde_multi'):
