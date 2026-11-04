@@ -1,11 +1,10 @@
 import math
 
+def gen_grid(center_co,tile_length, n_tiles, tuiles_eq1, tuiles_eq2, tuiles_ephemeres=None):
+    """Génère la grille avec des couleurs spécifiques par équipes pour le mode Multi."""
+    if tuiles_ephemeres is None:
+        tuiles_ephemeres = set()
 
-def gen_grid(center_co,tile_length,n_tiles,tiles=None):
-    """ crée la grille de départ vide
-    """
-    if tiles is None:
-        tiles = set()
     center_lat,center_lon = center_co
     # Calcul de la taille d'une tuile en degrés GPS
     step_lat = tile_length / 111.32  
@@ -19,31 +18,41 @@ def gen_grid(center_co,tile_length,n_tiles,tiles=None):
     grid_features = []
     for x in range(n_tiles):
         for y in range(n_tiles):        # Calcul des 4 coins du carré
-            bl_lon = min_lon + (x * step_lon)
-            bl_lat = min_lat + (y * step_lat)
+            lon1 = min_lon + x * step_lon
+            lat1 = min_lat + y * step_lat
+            lon2 = lon1 + step_lon
+            lat2 = lat1 + step_lat
             
-            br_lon = min_lon + ((x + 1) * step_lon)
-            br_lat = min_lat + (y * step_lat)
+            coord = (x, y)
+            is_eq1 = coord in tuiles_eq1
+            is_eq2 = coord in tuiles_eq2
+            is_eph = coord in tuiles_ephemeres
             
-            tr_lon = min_lon + ((x + 1) * step_lon)
-            tr_lat = min_lat + ((y + 1) * step_lat)
-            
-            tl_lon = min_lon + (x * step_lon)
-            tl_lat = min_lat + ((y + 1) * step_lat)
+            # --- LOGIQUE DES COULEURS DE TUILES (RÈGLE STRICTE) ---
+            if is_eq1 and is_eq2:
+                color = [150, 50, 200, 100]  # 🟣 Violet (Les deux équipes y sont passées)
+            elif is_eq1:
+                color = [0, 150, 255, 100]   # 🔵 Bleu (Appartient UNIQUEMENT à l'Équipe 1)
+            elif is_eq2:
+                color = [255, 50, 50, 100]   # 🔴 Rouge (Appartient UNIQUEMENT à l'Équipe 2)
+            elif is_eph:
+                color = [255, 255, 255, 125] # ⚪ Blanc (Territoire vierge fraîchement uploadé, pas encore sauvegardé)
+            else:
+                color = [0, 0, 0, 0]         # Transparent (Vide)
             
             carre = { # Le format GeoJSON demande de fermer le polygone en répétant le 1er point
                 "type": "Feature",
                 "geometry": {
                     "type": "Polygon",
                     "coordinates": [[
-                        [bl_lon, bl_lat], 
-                        [br_lon, br_lat], 
-                        [tr_lon, tr_lat], 
-                        [tl_lon, tl_lat], 
-                        [bl_lon, bl_lat]
+                        [lon1, lat1], 
+                        [lon2, lat1], 
+                        [lon2, lat2], 
+                        [lon1, lat2], 
+                        [lon1, lat1]
                     ]]},
                 "properties": {"case": f"X:{x} Y:{y}",
-                        "fill_color": [128, 0, 128, 90] if (x,y) in tiles else [255,255,255,0]
+                        "fill_color": [128, 0, 128, 90] if (x,y) in tuiles_ephemeres else [255,255,255,0]
                 }}
             grid_features.append(carre)
-    return grid_features
+    return {"type": "FeatureCollection", "features": grid_features}
