@@ -85,10 +85,10 @@ onglet_actif = st.pills(
 # =========================================================================================
 # =========================================================================================
 if onglet_actif == "MULTIPLAYER MODE":
-    st.subheader("Mode multijoueur -- ENSMA -- Saison 1 (Septembre/Octobre 2026)")
+    st.subheader("Mode multijoueur -- ENSMA -- Saison 2 (Novembre/Décembre 2026)")
     st.markdown("### 1️⃣ Ajout des traces")
     st.markdown("Tu peux ajouter tes fichiers .fit en plusieurs fois, ils s'accumuleront sur la carte de façon temporaire. Sauvegarde ensuite ta progression pour qu'elle soit visible par les autres joueurs !")
-    st.info("⚠️Attention⚠️ seules les traces passant dans l'arène et faites durant la bonne période sont traitées")
+    st.info("⚠️ Seules les traces passant dans l'arène et faites durant la bonne période sont traitées ⚠️")
     
     # Zone d'upload
     with st.form("upload_form_multi", border=False):
@@ -132,7 +132,7 @@ if onglet_actif == "MULTIPLAYER MODE":
             pickable=False,
             stroked=True,
             filled=False,
-            get_line_color=[0, 191, 255], 
+            get_line_color=[255,255,255], 
             get_line_width=4,          
             line_width_min_pixels=2,   
             line_width_max_pixels=10,  
@@ -140,9 +140,25 @@ if onglet_actif == "MULTIPLAYER MODE":
         layers_m.append(layer_ephemere_m)
 
     st.markdown(f"### Affichage carte multijoueur : {n_m} tuiles de {int(tile_length_m*1000)} m de côté")
+    # --- 1️⃣ LÉGENDE DE LA CARTE ---
+    st.markdown("""
+    **Légende des territoires :**  
+    🟦 **A1/A2 (Bleu)** | 🟥 **A3 (Rouge)** | 🟪 **Zone mixte** | ⬜ **Nouvelles tuiles (non sauvegardées)**
+    """)
+    
     tous_les_joueurs = list(col_multi.find({}, {"_id": 0}))
-    pseudo_dispo_m = []
     pseudo_dispo_m = [j["pseudo"] for j in tous_les_joueurs if "pseudo" in j]
+
+    tuiles_eq1_map = set()
+    tuiles_eq2_map = set()
+
+    for i in tous_les_joueurs:
+        if "tiles_conquered" in i:
+            tuiles = [tuple(t) if isinstance(t,list) else t for t in i["tiles_conquered"]]
+            if i.get("equipe") == "A1/A2":
+                tuiles_eq1_map.update(tuiles)
+            elif i.get("equipe") == "A3":
+                tuiles_eq2_map.update(tuiles)
 
     st.markdown("### Vue par équipes")
     c_eq1, c_eq2 = st.columns(2)
@@ -213,7 +229,7 @@ if onglet_actif == "MULTIPLAYER MODE":
             emo_m = emojis[i % len(palette)]
 
             with colonnes_m[i]:
-                afficher_joueur_m = st.checkbox(f"{emo_m} {pseudo_m}", value=True)
+                afficher_joueur_m = st.checkbox(f"{emo_m} {pseudo_m}", value=False)
 
             if afficher_joueur_m:
                 # On cherche le document unique où le pseudo correspond, sans le champ _id
@@ -238,8 +254,7 @@ if onglet_actif == "MULTIPLAYER MODE":
                         tuiles_joueur_m = [tuple(t) if isinstance(t,list) else t for t in data_joueur_m["tiles_conquered"]]
                         colored_tiles_m.update(tuiles_joueur_m)
 
-    grille_data_m = gen_grid(center_co_m, tile_length_m, n_m, colored_tiles_m)
-    
+    grille_data_m = gen_grid(center_co_m, tile_length_m, n_m, tuiles_eq1_map, tuiles_eq2_map, colored_tiles_m)
     # Calque 2 : la grille colorée selon les tuiles conquises
     if grille_data_m:
         layer_grille_m = pdk.Layer(
@@ -548,19 +563,20 @@ elif onglet_actif == "LEADERBOARDS":
         for doc in tous_les_joueurs_m:
             scores_m.append({"Joueur": doc.get("pseudo", "Inconnu"), "Score": doc.get("score", 0), "Équipe": doc.get("equipe", "-")})
 
-        tuiles = [tuple(t) if isinstance(t,list) else t for t in doc.get("tiles_conquered", [])]
-        if doc.get("equipe") == "A1/A2":
-            tuiles_eq1.update(tuiles)
-        elif doc.get("equipe") == "A3":
-            tuiles_eq2.update(tuiles)
+            tuiles = [tuple(t) if isinstance(t,list) else t for t in doc.get("tiles_conquered", [])]
+            
+            if doc.get("equipe") == "A1/A2":
+                tuiles_eq1.update(tuiles)
+            elif doc.get("equipe") == "A3":
+                tuiles_eq2.update(tuiles)
 
         score_eq1 = len(tuiles_eq1)
         score_eq2 = len(tuiles_eq2)
 
         if score_eq1>0 or score_eq2>0:
             st.markdown("### Guerre des territoires")
-            df_eq = [{"Équipe":"A1/A2","Tuiles Uniques":score_eq1,"Conquête":f"{100*score_eq1/n_m**2:.2f}%"},
-                    {"Équipe":"A3","Tuiles Uniques":score_eq2,"Conquête":f"{100*score_eq2/n_m**2:.2f}%"}]
+            df_eq = [{"Équipe":"A1/A2","Tuiles Uniques":score_eq1,"Conquête de l'équipe":f"{100*score_eq1/n_m**2:.2f}%"},
+                    {"Équipe":"A3","Tuiles Uniques":score_eq2,"Conquête de l'équipe":f"{100*score_eq2/n_m**2:.2f}%"}]
             df_eq = sorted(df_eq, key=lambda x: x["Tuiles Uniques"], reverse=True)
             st.dataframe(df_eq, use_container_width=True, hide_index=True)
             # Barre de progression pour l'équipe en tête
