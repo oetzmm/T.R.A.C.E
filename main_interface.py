@@ -239,7 +239,7 @@ if onglet_actif == "MULTIPLAYER MODE":
     with colnom:
         pseudo_m = st.text_input("Nom : ", key='pseudo_multi')
     with coleq:
-        equipe = st.selectbox("Équipe : ", options=["A1/A2", "A3", "Aucune"], key='equipe_multi', default_index=2)
+        equipe = st.selectbox("Équipe : ", options=["A1/A2", "A3", "Aucune"], key='equipe_multi', default = "Aucune")
 
     
     if st.button("Sauvegarder", key='sauvegarde_multi'):
