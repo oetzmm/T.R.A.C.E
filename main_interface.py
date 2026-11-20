@@ -612,7 +612,7 @@ elif onglet_actif == "GAMERULES":
 
     ### ⚔️ Saison 2 : CHOC DES PROMOS (🟦**A1/A2** vs 🟥**A3**)
     * **Période :** Du **1er Novembre au 31 Décembre 2026**.
-    * **Sports autorisés :** Course à pied, trail et marche uniquement (laissez les vélos au garage !).
+    * **Sports autorisés :** Course à pied, trail et marche uniquement.
     * **Objectif :** Faire marquer le maximum de points à son équipe. L'équipe qui a le plus de points au 31 décembre remporte la saison !
 
     ### 🎯 Comment sont calculés les points ?
