@@ -608,10 +608,10 @@ elif onglet_actif == "GAMERULES":
     st.subheader("Comment jouer à T.R.A.C.E. ?")
 
     st.markdown("""
-    **T.R.A.C.E.** est un jeu collectif de conquête de territoire basé sur vos traces GPS réelles.
+    **T.R.A.C.E.** est un jeu de conquête de territoire basé sur vos traces GPS réelles.
     L'arène autour de l'ENSMA est une grille de **9 km × 9 km**, découpée en cases de **300 mètres de côté**.
 
-    ### ⚔️ Saison 2 : Le Choc des Équipes (**A1/A2** 🟦 vs **A3** 🟥)
+    ### ⚔️ Saison 2 : CHOC DES PROMOS (**A1/A2** 🟦 vs **A3** 🟥)
     * **Période :** Du **1er Novembre au 31 Décembre 2026**.
     * **Sports autorisés :** Course à pied, trail et marche uniquement (laissez les vélos au garage !).
     * **Objectif :** Faire marquer le maximum de points à son équipe. L'équipe qui a le plus de points au 31 décembre remporte la saison !
