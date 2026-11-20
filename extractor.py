@@ -5,7 +5,7 @@ import io
 
 
 ### Dates autorisées
-mois = [9, 10, 11, 12]
+mois = [11, 12]
 annee = [2026]
 
 def semicircles_to_degrees(semicircles):
