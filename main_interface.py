@@ -178,7 +178,7 @@ if onglet_actif == "MULTIPLAYER MODE":
             )
             layers_m.append(layer_ephemere_m)
 
-    st.markdown(f"### 🗺️ Carte collective : {n_m}x{n_m} tuiles de {int(tile_length_m * 1000)} m de côté")
+    st.markdown(f"### Carte collective : {n_m}x{n_m} tuiles de {int(tile_length_m * 1000)} m de côté")
     st.markdown("""
     **Légende des territoires :**  
     🟦 **A1/A2 (Bleu)** | 🟥 **A3 (Rouge)** | 🟪 **Zone mixte (les 2 équipes)** | ⬜ **Tes nouvelles tuiles (non sauvegardées)**
@@ -198,7 +198,6 @@ if onglet_actif == "MULTIPLAYER MODE":
                 tuiles_eq2_map.update(tuiles)
 
     # Affichage UNIQUEMENT par équipes
-    st.markdown("#### 🛡️ Affichage des traces par équipe")
     c_eq1, c_eq2 = st.columns(2)
     with c_eq1:
         afficher_eq1 = st.checkbox("Afficher les traces A1/A2 🟦", value=False)
@@ -611,7 +610,7 @@ elif onglet_actif == "GAMERULES":
     **T.R.A.C.E.** est un jeu de conquête de territoire basé sur vos traces GPS réelles.
     L'arène autour de l'ENSMA est une grille de **9 km × 9 km**, découpée en cases de **300 mètres de côté**.
 
-    ### ⚔️ Saison 2 : CHOC DES PROMOS (**A1/A2** 🟦 vs **A3** 🟥)
+    ### ⚔️ Saison 2 : CHOC DES PROMOS (🟦**A1/A2** vs 🟥**A3**)
     * **Période :** Du **1er Novembre au 31 Décembre 2026**.
     * **Sports autorisés :** Course à pied, trail et marche uniquement (laissez les vélos au garage !).
     * **Objectif :** Faire marquer le maximum de points à son équipe. L'équipe qui a le plus de points au 31 décembre remporte la saison !
