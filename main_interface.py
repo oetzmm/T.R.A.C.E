@@ -629,7 +629,7 @@ elif onglet_actif == "GAMERULES":
     1. Récupérez vos sorties en fichiers `.fit` ou `.fit.gz` depuis Strava, Garmin, Coros, Polar ou Suunto.
     2. Dans **MULTIPLAYER MODE**, uploadez vos fichiers et cliquez sur *Analyser ces traces*.
     3. Indiquez votre **pseudo** *(gardez toujours le même pour que votre score soit bien compté !)* et choisissez votre **équipe** (**A1/A2** ou **A3**), puis cliquez sur **Sauvegarder**.
-    4. *(Bonus)* Un **Mode Solo** reste disponible pour créer votre propre arène chez vous, sans limite de date.
+    4. Un **Mode Solo** reste disponible pour créer votre propre arène chez vous, sans limite de date.
 
     ### ⚠️ Avertissement ⚠️
     #### **Ne vous mettez pas en danger pour débloquer une case, le créateur de ce jeu décline toute responsabilité.**
