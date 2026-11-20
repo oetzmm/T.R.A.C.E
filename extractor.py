@@ -3,6 +3,11 @@ from fitparse import FitFile
 import math
 import io
 
+
+### Dates autorisées
+mois = [9, 10, 11, 12]
+annee = [2026]
+
 def semicircles_to_degrees(semicircles):
     """Fonction de conversion des données "semicercles" vers classique (Lat/Long)"""
     if semicircles is None:
@@ -99,7 +104,7 @@ def analyser_fit(files_upload, center_co, n, tile_length, progress_bar, mode="mu
 
                     # Validation Saison 2 : du 1er Novembre au 31 Décembre 2026
                     if mode == "multi" and sport_date is not None and not date_validated:
-                        if (sport_date.month not in [11, 12]) or (sport_date.year != 2026):
+                        if (sport_date.month not in mois) or (sport_date.year not in annee):
                             act_valid = False
                             break
                         date_validated = True
