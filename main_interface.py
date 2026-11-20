@@ -626,15 +626,12 @@ elif onglet_actif == "GAMERULES":
     | 🔁 **Tu repasses une 2ème fois** dans une case où tu es déjà allé(e) | **+5 pts** |
     | ✨ **Tu y repasses une 3ème fois, 4ème fois, etc.** | **+1 pt** par sortie |
 
-    > **💡 Exemple concret :** Alice court dans une nouvelle case → **+10 pts**. Elle y repasse le lendemain → **+5 pts**, puis la semaine suivante → **+1 pt**. Son coéquipier Bob passe à son tour dans cette même case → **+7 pts** (puis **+5 pts** à son 2ème passage, etc.).  
-    > *Moralité : explorez de nouvelles cases, encouragez vos coéquipiers à courir, et même vos sorties habituelles rapportent toujours des points !*
-
     ### ⚙️ Comment participer ?
     1. Récupérez vos sorties en fichiers `.fit` ou `.fit.gz` depuis Strava, Garmin, Coros, Polar ou Suunto.
     2. Dans **MULTIPLAYER MODE**, uploadez vos fichiers et cliquez sur *Analyser ces traces*.
-    3. Indiquez votre **pseudo** *(gardez toujours le même pour que vos passages soient bien comptés !)* et choisissez votre **équipe** (**A1/A2** ou **A3**), puis cliquez sur **Sauvegarder**.
+    3. Indiquez votre **pseudo** *(gardez toujours le même pour que votre score soit bien compté !)* et choisissez votre **équipe** (**A1/A2** ou **A3**), puis cliquez sur **Sauvegarder**.
     4. *(Bonus)* Un **Mode Solo** reste disponible pour créer votre propre arène chez vous, sans limite de date.
 
     ### ⚠️ Avertissement ⚠️
-    **Ne vous mettez pas en danger pour débloquer une case, le créateur de ce jeu décline toute responsabilité.**
+    #**Ne vous mettez pas en danger pour débloquer une case, le créateur de ce jeu décline toute responsabilité.**
     """)
