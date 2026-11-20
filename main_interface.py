@@ -633,5 +633,5 @@ elif onglet_actif == "GAMERULES":
     4. *(Bonus)* Un **Mode Solo** reste disponible pour créer votre propre arène chez vous, sans limite de date.
 
     ### ⚠️ Avertissement ⚠️
-    #**Ne vous mettez pas en danger pour débloquer une case, le créateur de ce jeu décline toute responsabilité.**
+    # **Ne vous mettez pas en danger pour débloquer une case, le créateur de ce jeu décline toute responsabilité.**
     """)
