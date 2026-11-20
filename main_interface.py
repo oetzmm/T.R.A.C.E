@@ -233,8 +233,8 @@ if onglet_actif == "MULTIPLAYER MODE":
         center_co_m,
         tile_length_m,
         n_m,
-        tuiles_eq1=tuiles_eq1_map,
-        tuiles_eq2=tuiles_eq2_map,
+        tuiles_eq1=tuiles_eq1_map if afficher_eq1 else set(),
+        tuiles_eq2=tuiles_eq2_map if afficher_eq2 else set(),
         tuiles_ephemeres=st.session_state.tuiles_m
     )
     if grille_data_m:
