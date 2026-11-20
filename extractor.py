@@ -11,19 +11,23 @@ def semicircles_to_degrees(semicircles):
 
 ## ----------------FONCTION D'ANALYSE DES FICHIERS FIT---------------
 
-def analyser_fit(files_upload,center_co,n,tile_length,progress_bar,mode="multi"):
+def analyser_fit(files_upload, center_co, n, tile_length, progress_bar, mode="multi"):
     """
-    Prend une liste de fichiers uploadés via Streamlit et renvoie les tuiles et les traces.
+    Prend une liste de fichiers uploadés via Streamlit et renvoie :
+    - tiles_conquered : set des tuiles uniques (x, y)
+    - total_coordinates : liste des traces valides
+    - tile_counts : dictionnaire {(x, y): nb_passages} (1 passage max par activité)
     """
     tiles_conquered = set()
+    tile_counts = {}
     total_coordinates = []
-    geojson_data = {                # Structure de base du GeoJSON
-    "type": "FeatureCollection",
-    "features": []
+    geojson_data = {
+        "type": "FeatureCollection",
+        "features": []
     }
 
     center_lat, center_lon = center_co
-    step_lat = tile_length / 111.32  
+    step_lat = tile_length / 111.32
     step_lon = tile_length / (111.32 * math.cos(math.radians(center_lat)))
 
     min_lat = center_lat - (n * step_lat * 0.5)
@@ -31,8 +35,11 @@ def analyser_fit(files_upload,center_co,n,tile_length,progress_bar,mode="multi")
     min_lon = center_lon - (n * step_lon * 0.5)
     max_lon = center_lon + (n * step_lon * 0.5)
 
-    #1 Configuration des règles
-    sports_autorises = ['running', 'walking', 'hiking', 'trail_running', 'mountaineering', 'track_running', 'track_field', 'generic', '1', '11', '17']
+    # Configuration des sports autorisés
+    sports_autorises = [
+        'running', 'walking', 'hiking', 'trail_running', 'mountaineering',
+        'track_running', 'track_field', 'generic', '1', '11', '17'
+    ]
 
     total_fichiers = len(files_upload)
 
@@ -41,32 +48,30 @@ def analyser_fit(files_upload,center_co,n,tile_length,progress_bar,mode="multi")
             progress_bar.progress((i + 1) / total_fichiers)
         filename_lower = file.name.lower()
         file.seek(0)
-        
+
         if filename_lower.endswith(".fit.gz"):
             fitfile = FitFile(io.BytesIO(gzip.decompress(file.read())))
         else:
             fitfile = FitFile(file)
-        
-        # Valeur par défaut si non trouvé
+
         coordinates = []
-        tuiles_fichier = set()
+        tuiles_fichier = set() # Un set par fichier => max 1 passage par case pour une même sortie
         sport_type = "Unknown"
         sport_date = None
         act_valid = True
         marque_montre = "Unknown"
 
         try:
-            nb_cases_avant = len(tiles_conquered)
             record_count = 0
             date_validated = False
             for message in fitfile.get_messages():
-                # --- Detection de la marque ---
+                # --- Détection de la marque ---
                 if message.name == 'file_id':
                     val = message.get_value('manufacturer')
                     if val is not None:
-                        marque_montre = str(val) # ex: "1" (Garmin), "294" (Coros), "123" (Polar)
+                        marque_montre = str(val)
 
-                # --- Intercepteur précoce
+                # --- Intercepteur précoce ---
                 elif message.name == 'sport':
                     val = message.get_value('sport') or message.get_value('sub_sport')
                     if val is not None:
@@ -91,22 +96,25 @@ def analyser_fit(files_upload,center_co,n,tile_length,progress_bar,mode="multi")
                 elif message.name == 'record':
                     if sport_date is None:
                         sport_date = message.get_value('timestamp')
+
+                    # Validation Saison 2 : du 1er Novembre au 31 Décembre 2026
                     if mode == "multi" and sport_date is not None and not date_validated:
-                        if (sport_date.month not in [9,10]) or (sport_date.year != 2026):
+                        if (sport_date.month not in [11, 12]) or (sport_date.year != 2026):
                             act_valid = False
                             break
                         date_validated = True
 
                     if sport_type == "Unknown":
                         val = message.get_value('activity_type') or message.get_value('sport')
-                        if val is not None: sport_type = str(val)
+                        if val is not None:
+                            sport_type = str(val)
 
                     if sport_type != "Unknown" and sport_type not in sports_autorises:
                         act_valid = False
                         break
 
                     record_count += 1
-                    if record_count % 10 != 0: # Filtrage des données
+                    if record_count % 10 != 0:
                         continue
 
                     lat = semicircles_to_degrees(message.get_value('position_lat'))
@@ -118,14 +126,18 @@ def analyser_fit(files_upload,center_co,n,tile_length,progress_bar,mode="multi")
                             xtile = math.floor((lon - min_lon) / step_lon)
                             ytile = math.floor((lat - min_lat) / step_lat)
                             tuiles_fichier.add((xtile, ytile))
-        except Exception as e:
-            pass  # Ignorer les erreurs de lecture de fichier FIT
+        except Exception:
+            pass
 
         # Validation et sauvegarde finale
         if act_valid and (sport_type == "Unknown" or sport_type in sports_autorises) and len(coordinates) > 1 and len(tuiles_fichier) > 0:
             tiles_conquered.update(tuiles_fichier)
-            track_color = [252,76,2] if mode == "multi" else [255, 87, 34] # Orange classique en multi, nuance différente en solo
-            
+
+            # On incrémente de +1 chaque tuile traversée lors de CETTE sortie
+            for tuile in tuiles_fichier:
+                tile_counts[tuile] = tile_counts.get(tuile, 0) + 1
+
+            track_color = [252, 76, 2] if mode == "multi" else [255, 87, 34]
             feature = {
                 "type": "Feature",
                 "geometry": {
@@ -138,12 +150,12 @@ def analyser_fit(files_upload,center_co,n,tile_length,progress_bar,mode="multi")
                     "color": track_color,
                     "date": str(sport_date),
                     "watch_brand": marque_montre,
-
                 }
             }
             geojson_data["features"].append(feature)
             total_coordinates.append(coordinates)
-            print(f"Trace OK ({mode}) : {file.name} - Sport: {sport_type} - Date: {sport_date} - Marque: {marque_montre} - Points: {len(coordinates)}")
+            print(f"Trace OK ({mode}) : {file.name} - Sport: {sport_type} - Date: {sport_date} - Points: {len(coordinates)}")
         else:
-            print(f"Trace IGNORÉE ({mode}) : {file.name} - Sport: {sport_type} - Date: {sport_date} - Marque: {marque_montre} - Points: {len(coordinates)}")
-    return tiles_conquered, total_coordinates
+            print(f"Trace IGNORÉE ({mode}) : {file.name} - Sport: {sport_type} - Date: {sport_date}")
+
+    return tiles_conquered, total_coordinates, tile_counts
