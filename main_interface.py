@@ -141,6 +141,31 @@ if onglet_actif == "MULTIPLAYER MODE":
     layers_m = []
     features_m = []
 
+    tous_les_joueurs_m = list(col_multi.find({}, {"_id": 0}))
+
+    joueurs_eq1 = [d for d in tous_les_joueurs_m if d.get("equipe") == "A1/A2"]
+    joueurs_eq2 = [d for d in tous_les_joueurs_m if d.get("equipe") == "A3"]
+
+    stats_eq1 = calculer_details_equipe(joueurs_eq1)
+    stats_eq2 = calculer_details_equipe(joueurs_eq2)
+
+    # Compteurs globaux en gros
+    m1, m2 = st.columns(2)
+    with m1:
+        st.metric(
+            label="🟦 Équipe A1/A2",
+            value=f"{stats_eq1['total_points']} pts",
+            delta=f"{stats_eq1['cases_debloquees']} cases ({100 * stats_eq1['cases_debloquees'] / (n_m**2):.1f}%)"
+        )
+    with m2:
+        st.metric(
+            label="🟥 Équipe A3",
+            value=f"{stats_eq2['total_points']} pts",
+            delta=f"{stats_eq2['cases_debloquees']} cases ({100 * stats_eq2['cases_debloquees'] / (n_m**2):.1f}%)"
+        )
+
+    st.divider()
+
     # Calque éphémère (traces analysées mais pas encore sauvegardées)
     if st.session_state.traces_m:
         for trace in st.session_state.traces_m:
