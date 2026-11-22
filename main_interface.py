@@ -136,7 +136,7 @@ onglet_actif = st.pills(
 # ONGLET 1 : MODE COLLECTIF (MULTIPLAYER)
 # =========================================================================================
 if onglet_actif == "MULTIPLAYER MODE":
-    st.subheader("🌍 Mode par équipe -- ENSMA -- Saison 2 (1er Novembre - 31 Décembre 2026)")
+    st.subheader("🌍 Saison 2 -- Choc des PROMOS (1er Novembre - 31 Décembre 2026)")
 
     layers_m = []
     features_m = []
