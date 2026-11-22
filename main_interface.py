@@ -102,6 +102,8 @@ if "center_p" not in st.session_state:
     st.session_state.center_p = (0.000, 0.000)
 if "last_choix_arene" not in st.session_state:
     st.session_state.last_choix_arene = None
+if "tile_first_dates_m" not in st.session_state:
+    st.session_state.tile_first_dates_m = {}
 
 # --- CONFIGURATION DE LA PAGE ---
 st.set_page_config(page_title="T.R.A.C.E. Viewer", page_icon="🏃", layout="wide")
@@ -140,14 +142,16 @@ if onglet_actif == "MULTIPLAYER MODE":
         st.session_state.tuiles_m.clear()
         st.session_state.tile_counts_m.clear()
         st.session_state.traces_m.clear()
+        st.session_state.tile_first_dates_m.clear()
 
         with st.spinner("Analyse des traces en cours..."):
-            tuiles_m, traces_m, tile_counts_m = analyser_fit(
-                external_files_m, center_co_m, n_m, tile_length_m, barre_prog_m, mode="multi"
-            )
+            tuiles_m, traces_m, tile_counts_m, tile_first_dates_m = analyser_fit(
+                external_files_m, center_co_m, n_m, tile_length_m, barre_prog_m, mode="multi")
+            
             st.session_state.tuiles_m.update(tuiles_m)
             st.session_state.tile_counts_m.update(tile_counts_m)
             st.session_state.traces_m.extend(traces_m)
+            st.session_state.tile_first_dates_m.update(tile_first_dates_m)
 
         barre_prog_m.empty()
         total_passages = sum(st.session_state.tile_counts_m.values())
@@ -277,6 +281,7 @@ if onglet_actif == "MULTIPLAYER MODE":
 
                 # Conversion des clés (x, y) en chaînes "x,y" pour MongoDB
                 tile_counts_tot = {f"{x},{y}": count for (x, y), count in st.session_state.tile_counts_m.items()}
+                tile_first_dates_tot = {f"{x},{y}": d for (x, y), d in st.session_state.tile_first_dates_m.items()}
 
                 anciennes_data_m = col_multi.find_one({"pseudo": pseudo_clean, "equipe": equipe}, {"_id": 0})
 
@@ -296,6 +301,10 @@ if onglet_actif == "MULTIPLAYER MODE":
                     for k, v in anciens_counts.items():
                         tile_counts_tot[k] = tile_counts_tot.get(k, 0) + v
 
+                    for k,d in anciennes_data_m.get("tile_first_dates", {}).items():
+                        if k not in tile_first_dates_tot or d < tile_first_dates_tot[k]:
+                            tile_first_dates_tot[k] = d
+
                 geojson_final_m = {
                     "pseudo": pseudo_clean,
                     "equipe": equipe,
@@ -303,6 +312,7 @@ if onglet_actif == "MULTIPLAYER MODE":
                     "score": len(tuiles_tot_m),
                     "tiles_conquered": list(tuiles_tot_m),
                     "tile_counts": tile_counts_tot,
+                    "tile_first_dates": tile_first_dates_tot,
                     "features": traces_tot_m
                 }
 
@@ -313,6 +323,7 @@ if onglet_actif == "MULTIPLAYER MODE":
             st.session_state.tuiles_m.clear()
             st.session_state.tile_counts_m.clear()
             st.session_state.traces_m.clear()
+            st.session_state.tile_first_dates_m.clear()
 
             time.sleep(2)
             st.rerun()
@@ -377,7 +388,7 @@ elif onglet_actif == "SOLO MODE":
             st.session_state.tuiles_p.clear()
             st.session_state.traces_p.clear()
             with st.spinner("Analyse des traces en cours..."):
-                tuiles_p, traces_p, _ = analyser_fit(
+                tuiles_p, traces_p, _, _ = analyser_fit(
                     external_files_p, center_co_p, n_p, tile_length_p, barre_prog_p, mode="solo"
                 )
                 st.session_state.tuiles_p.update(tuiles_p)
