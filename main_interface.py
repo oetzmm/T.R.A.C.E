@@ -136,7 +136,7 @@ onglet_actif = st.pills(
 # ONGLET 1 : MODE COLLECTIF (MULTIPLAYER)
 # =========================================================================================
 if onglet_actif == "MULTIPLAYER MODE":
-    st.subheader("🌍 Mode Collectif -- ENSMA -- Saison 2 (1er Novembre - 31 Décembre 2026)")
+    st.subheader("🌍 Mode par équipe -- ENSMA -- Saison 2 (1er Novembre - 31 Décembre 2026)")
 
     layers_m = []
     features_m = []
@@ -164,9 +164,7 @@ if onglet_actif == "MULTIPLAYER MODE":
             layers_m.append(layer_ephemere_m)
 
     # --- AFFICHAGE DE LA CARTE EN HAUT ---
-    st.markdown(f"### 🗺️ Carte collective : {n_m}x{n_m} tuiles de {int(tile_length_m * 1000)} m de côté")
-    st.markdown("""
-    **Légende des territoires :**  
+    st.markdown(""" 
     🟦 **A1/A2 (Bleu)** | 🟥 **A3 (Rouge)** | 🟪 **Zone mixte (les 2 équipes)** | ⬜ **Tes nouvelles tuiles (non sauvegardées)**
     """)
 
@@ -183,7 +181,6 @@ if onglet_actif == "MULTIPLAYER MODE":
             elif j.get("equipe") == "A3":
                 tuiles_eq2_map.update(tuiles)
 
-    st.markdown("#### 🛡️ Affichage des traces par équipe")
     c_eq1, c_eq2 = st.columns(2)
     with c_eq1:
         afficher_eq1 = st.checkbox("Afficher les traces A1/A2 🟦", value=True)
