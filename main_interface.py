@@ -44,7 +44,7 @@ def calculer_details_equipe(joueurs_equipe):
         for case_key, nb_passages in counts.items():
             if nb_passages > 0:
                 date_passage = first_dates.get(case_key, "9999-12-31")
-                passages_par_case.setdefault(case_key, []).append(nb_passages)
+                passages_par_case.setdefault(case_key, []).append((date_passage, pseudo, nb_passages))
 
     nb_cases_debloquees = len(passages_par_case)
     nb_nouveaux_coequipiers = 0
