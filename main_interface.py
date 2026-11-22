@@ -27,16 +27,23 @@ def calculer_details_equipe(joueurs_equipe):
     """
     # Structure : { "x,y": [nb_passages_joueur1, nb_passages_joueur2, ...] }
     passages_par_case = {}
+    points_par_joueur = {}
 
     for doc in joueurs_equipe:
         # Compatibilité avec d'anciennes données sans "tile_counts"
+        pseudo = doc.get("pseudo", "Inconnu")
+        points_par_joueur.setdefault(pseudo, 0)
+
         if "tile_counts" in doc and doc["tile_counts"]:
             counts = doc["tile_counts"]
         else:
             counts = {f"{t[0]},{t[1]}": 1 for t in doc.get("tiles_conquered", [])}
 
+        first_dates = doc.get("tile_first_dates", {})
+
         for case_key, nb_passages in counts.items():
             if nb_passages > 0:
+                date_passage = first_dates.get(case_key, "9999-12-31")
                 passages_par_case.setdefault(case_key, []).append(nb_passages)
 
     nb_cases_debloquees = len(passages_par_case)
@@ -44,17 +51,23 @@ def calculer_details_equipe(joueurs_equipe):
     nb_deuxiemes_passages = 0
     nb_passages_bonus = 0
 
-    for liste_passages in passages_par_case.values():
-        # Chaque joueur supplémentaire après le 1er rapporte 7 pts
-        if len(liste_passages) > 1:
-            nb_nouveaux_coequipiers += len(liste_passages) - 1
+    for liste_visites in passages_par_case.values():
+        # Tri chronologique : le premier joueur passé sur la case prend les 10 pts, les suivants 7 pts
+        liste_visites.sort(key=lambda x: (x[0], x[1]))
 
-        # Passages répétés par un même joueur (5 pts au 2e, 1 pt à partir du 3e)
-        for k in liste_passages:
+        if len(liste_visites) > 1:
+            nb_nouveaux_coequipiers += len(liste_visites) - 1
+
+        for idx, (_, pseudo, k) in enumerate(liste_visites):
+            pts_case = 10 if idx == 0 else 7
             if k >= 2:
                 nb_deuxiemes_passages += 1
+                pts_case += 5
             if k >= 3:
                 nb_passages_bonus += (k - 2)
+                pts_case += (k - 2)
+
+            points_par_joueur[pseudo] += pts_case
 
     pts_deblocage = nb_cases_debloquees * 10
     pts_coequipiers = nb_nouveaux_coequipiers * 7
@@ -72,7 +85,8 @@ def calculer_details_equipe(joueurs_equipe):
         "pts_coequipiers": pts_coequipiers,
         "pts_deuxiemes": pts_deuxiemes,
         "pts_bonus": pts_bonus,
-        "nb_joueurs": len(joueurs_equipe)
+        "nb_joueurs": len(joueurs_equipe),
+        "points_par_joueur": points_par_joueur
     }
 
 # --- CONFIGURATION DE L'ARÈNE T.R.A.C.E ---
@@ -607,42 +621,37 @@ elif onglet_actif == "LEADERBOARDS":
             """, unsafe_allow_html=True)
         else:
             st.info("Aucun point enregistré pour le moment sur la Saison 2.")
-            tableau_detail = [
-        {
-            "Catégorie de points": "🚩 1ères conquêtes (10 pts / case)",
-            "🟦 A1/A2": f"{stats_eq1['pts_deblocage']} pts ({stats_eq1['cases_debloquees']})",
-            "🟥 A3": f"{stats_eq2['pts_deblocage']} pts ({stats_eq2['cases_debloquees']})"
-        },
-        {
-            "Catégorie de points": "🤝 Nouveaux coéquipiers (7 pts)",
-            "🟦 A1/A2": f"{stats_eq1['pts_coequipiers']} pts ({stats_eq1['nb_coequipiers']})",
-            "🟥 A3": f"{stats_eq2['pts_coequipiers']} pts ({stats_eq2['nb_coequipiers']})"
-        },
-        {
-            "Catégorie de points": "🔁 2èmes passages (5 pts)",
-            "🟦 A1/A2": f"{stats_eq1['pts_deuxiemes']} pts ({stats_eq1['nb_deuxiemes']})",
-            "🟥 A3": f"{stats_eq2['pts_deuxiemes']} pts ({stats_eq2['nb_deuxiemes']})"
-        },
-        {
-            "Catégorie de points": "✨ Passages supplémentaires (1 pt)",
-            "🟦 A1/A2": f"{stats_eq1['pts_bonus']} pts ({stats_eq1['nb_bonus']})",
-            "🟥 A3": f"{stats_eq2['pts_bonus']} pts ({stats_eq2['nb_bonus']})"
-        },
-        {
-            "Catégorie de points": "👥 Participants actifs",
-            "🟦 A1/A2": f"{stats_eq1['nb_joueurs']}",
-            "🟥 A3": f"{stats_eq2['nb_joueurs']}"
-        },
-        {
-            "Catégorie de points": "🏆 TOTAL",
-            "🟦 A1/A2": f"{stats_eq1['total_points']} pts",
-            "🟥 A3": f"{stats_eq2['total_points']} pts"
-        }
-    ]
-    st.dataframe(tableau_detail, use_container_width=True, hide_index=True)
 
+        # --- TABLEAUX DES CONTRIBUTIONS PAR ÉQUIPE ---
+        st.markdown("### 👥 Contributions par équipe")
+        col_tab1, col_tab2 = st.columns(2)
 
+        for col_tab, titre_eq, stats_eq in [
+            (col_tab1, "🟦 Équipe A1/A2", stats_eq1),
+            (col_tab2, "🟥 Équipe A3", stats_eq2)
+        ]:
+            with col_tab:
+                st.markdown(f"**{titre_eq}**")
+                total_eq = stats_eq["total_points"]
+                contribs = sorted(
+                    stats_eq["points_par_joueur"].items(),
+                    key=lambda x: x[1],
+                    reverse=True
+                )
 
+                if contribs:
+                    lignes = []
+                    for pseudo, pts in contribs:
+                        pct = (pts / total_eq * 100) if total_eq > 0 else 0.0
+                        lignes.append({
+                            "Pseudo": pseudo,
+                            "Score": f"{pts} pts ({pct:.1f}%)"
+                        })
+                    st.dataframe(lignes, use_container_width=True, hide_index=True)
+                else:
+                    st.info("Aucun participant pour le moment.")
+
+        
     # --- CLASSEMENT 2 : CHACUN CHEZ SOI (SOLO) ---
     with col_p:
         st.subheader("🏠 Mode solo -- Arène personnelle -- De tout temps")
