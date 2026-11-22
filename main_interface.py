@@ -584,6 +584,42 @@ elif onglet_actif == "LEADERBOARDS":
         else:
             st.info("Aucun point enregistré pour le moment sur la Saison 2.")
 
+            tableau_detail = [
+        {
+            "Catégorie de points": "🚩 1ères conquêtes (10 pts / case)",
+            "🟦 A1/A2": f"{stats_eq1['pts_deblocage']} pts ({stats_eq1['cases_debloquees']})",
+            "🟥 A3": f"{stats_eq2['pts_deblocage']} pts ({stats_eq2['cases_debloquees']})"
+        },
+        {
+            "Catégorie de points": "🤝 Nouveaux coéquipiers (7 pts)",
+            "🟦 A1/A2": f"{stats_eq1['pts_coequipiers']} pts ({stats_eq1['nb_coequipiers']})",
+            "🟥 A3": f"{stats_eq2['pts_coequipiers']} pts ({stats_eq2['nb_coequipiers']})"
+        },
+        {
+            "Catégorie de points": "🔁 2èmes passages (5 pts)",
+            "🟦 A1/A2": f"{stats_eq1['pts_deuxiemes']} pts ({stats_eq1['nb_deuxiemes']})",
+            "🟥 A3": f"{stats_eq2['pts_deuxiemes']} pts ({stats_eq2['nb_deuxiemes']})"
+        },
+        {
+            "Catégorie de points": "✨ Passages supplémentaires (1 pt)",
+            "🟦 A1/A2": f"{stats_eq1['pts_bonus']} pts ({stats_eq1['nb_bonus']})",
+            "🟥 A3": f"{stats_eq2['pts_bonus']} pts ({stats_eq2['nb_bonus']})"
+        },
+        {
+            "Catégorie de points": "👥 Participants actifs",
+            "🟦 A1/A2": f"{stats_eq1['nb_joueurs']}",
+            "🟥 A3": f"{stats_eq2['nb_joueurs']}"
+        },
+        {
+            "Catégorie de points": "🏆 TOTAL",
+            "🟦 A1/A2": f"{stats_eq1['total_points']} pts",
+            "🟥 A3": f"{stats_eq2['total_points']} pts"
+        }
+    ]
+    st.dataframe(tableau_detail, use_container_width=True, hide_index=True)
+
+
+
     # --- CLASSEMENT 2 : CHACUN CHEZ SOI (SOLO) ---
     with col_p:
         st.subheader("🏠 Mode solo -- Arène personnelle -- De tout temps")
@@ -624,7 +660,7 @@ elif onglet_actif == "GAMERULES":
     | 🤝 **Tu découvres une case déjà débloquée par un coéquipier** (ton 1er passage perso) | **+7 pts** |
     | 🔁 **Tu repasses une 2ème fois** dans une case où tu es déjà allé(e) | **+5 pts** |
     | ✨ **Tu y repasses une 3ème fois, 4ème fois, etc.** | **+1 pt** par sortie |
-
+    | ⚠️ **Un seul passage par sortie** est comptabilisé pour une case donnée (même si tu passes plusieurs fois dans la même case lors de la même sortie). |
     ### ⚙️ Comment participer ?
     1. Récupérez vos sorties en fichiers `.fit` ou `.fit.gz` depuis Strava, Garmin, Coros, Polar ou Suunto.
     2. Dans **MULTIPLAYER MODE**, uploadez vos fichiers et cliquez sur *Analyser ces traces*.
