@@ -136,71 +136,12 @@ onglet_actif = st.pills(
 # ONGLET 1 : MODE COLLECTIF (MULTIPLAYER)
 # =========================================================================================
 if onglet_actif == "MULTIPLAYER MODE":
-    st.subheader("🌍 Mode par équipes -- ENSMA -- Saison 2 (1er Novembre - 31 Décembre 2026)")
-
-    tous_les_joueurs_m = list(col_multi.find({}, {"_id": 0}))
-
-    joueurs_eq1 = [d for d in tous_les_joueurs_m if d.get("equipe") == "A1/A2"]
-    joueurs_eq2 = [d for d in tous_les_joueurs_m if d.get("equipe") == "A3"]
-
-    stats_eq1 = calculer_details_equipe(joueurs_eq1)
-    stats_eq2 = calculer_details_equipe(joueurs_eq2)
-
-    # Compteurs globaux en gros
-    m1, m2 = st.columns(2)
-    with m1:
-        st.metric(
-            label="🟦 Équipe A1/A2",
-            value=f"{stats_eq1['total_points']} pts",
-            delta=f"{stats_eq1['cases_debloquees']} cases ({100 * stats_eq1['cases_debloquees'] / (n_m**2):.1f}%)"
-        )
-    with m2:
-        st.metric(
-            label="🟥 Équipe A3",
-            value=f"{stats_eq2['total_points']} pts",
-            delta=f"{stats_eq2['cases_debloquees']} cases ({100 * stats_eq2['cases_debloquees'] / (n_m**2):.1f}%)"
-        )
-
-    st.divider()
-    
-    st.markdown("### 1️⃣ Ajout de tes traces")
-    st.markdown("Ajoute tes fichiers `.fit` ou `.fit.gz` pour faire marquer des points à ton équipe, puis sauvegarde ta contribution en bas de page.")
-    st.info("⚠️ Seules les traces de course/marche passant dans l'arène entre le **1er novembre** et le **31 décembre 2026** sont prises en compte.")
-
-    # Zone d'upload
-    with st.form("upload_form_multi", border=False):
-        external_files_m = st.file_uploader(
-            "Ajoute tes fichiers .fit ici",
-            type=["fit", "fit.gz"],
-            accept_multiple_files=True,
-            key="upload_multi"
-        )
-        bouton_analyse_m = st.form_submit_button("Analyser ces traces", key="analyse_multi")
-
-    if external_files_m and bouton_analyse_m:
-        barre_prog_m = st.progress(0)
-        st.session_state.tuiles_m.clear()
-        st.session_state.tile_counts_m.clear()
-        st.session_state.traces_m.clear()
-        st.session_state.tile_first_dates_m.clear()
-
-        with st.spinner("Analyse des traces en cours..."):
-            tuiles_m, traces_m, tile_counts_m, tile_first_dates_m = analyser_fit(
-                external_files_m, center_co_m, n_m, tile_length_m, barre_prog_m, mode="multi")
-            
-            st.session_state.tuiles_m.update(tuiles_m)
-            st.session_state.tile_counts_m.update(tile_counts_m)
-            st.session_state.traces_m.extend(traces_m)
-            st.session_state.tile_first_dates_m.update(tile_first_dates_m)
-
-        barre_prog_m.empty()
-        total_passages = sum(st.session_state.tile_counts_m.values())
-        st.success(f"{len(st.session_state.traces_m)} activité(s) valide(s) analysée(s) : {len(st.session_state.tuiles_m)} cases touchées ({total_passages} passages au total).")
+    st.subheader("🌍 Mode Collectif -- ENSMA -- Saison 2 (1er Novembre - 31 Décembre 2026)")
 
     layers_m = []
     features_m = []
 
-    # Calque éphémère (traces pas encore sauvegardées)
+    # Calque éphémère (traces analysées mais pas encore sauvegardées)
     if st.session_state.traces_m:
         for trace in st.session_state.traces_m:
             if len(trace) > 1:
@@ -222,7 +163,8 @@ if onglet_actif == "MULTIPLAYER MODE":
             )
             layers_m.append(layer_ephemere_m)
 
-    st.markdown(f"### Carte collective : {n_m}x{n_m} tuiles de {int(tile_length_m * 1000)} m de côté")
+    # --- AFFICHAGE DE LA CARTE EN HAUT ---
+    st.markdown(f"### 🗺️ Carte collective : {n_m}x{n_m} tuiles de {int(tile_length_m * 1000)} m de côté")
     st.markdown("""
     **Légende des territoires :**  
     🟦 **A1/A2 (Bleu)** | 🟥 **A3 (Rouge)** | 🟪 **Zone mixte (les 2 équipes)** | ⬜ **Tes nouvelles tuiles (non sauvegardées)**
@@ -241,7 +183,7 @@ if onglet_actif == "MULTIPLAYER MODE":
             elif j.get("equipe") == "A3":
                 tuiles_eq2_map.update(tuiles)
 
-    # Affichage UNIQUEMENT par équipes
+    st.markdown("#### 🛡️ Affichage des traces par équipe")
     c_eq1, c_eq2 = st.columns(2)
     with c_eq1:
         afficher_eq1 = st.checkbox("Afficher les traces A1/A2 🟦", value=True)
@@ -272,7 +214,6 @@ if onglet_actif == "MULTIPLAYER MODE":
                 )
                 layers_m.append(layer_equipe)
 
-    # Grille colorée par équipes
     grille_data_m = gen_grid(
         center_co_m,
         tile_length_m,
@@ -302,7 +243,62 @@ if onglet_actif == "MULTIPLAYER MODE":
     r_m = pdk.Deck(layers=layers_m, initial_view_state=view_state_m, map_provider="carto", map_style="dark")
     st.pydeck_chart(r_m)
 
-    # --- SAUVEGARDE DÉFINITIVE ---
+    # --- 1️⃣ ANALYSE DES TRACES (SOUS LA CARTE) ---
+    st.divider()
+    st.markdown("### 1️⃣ Ajout et analyse de tes traces")
+    st.info("⚠️ Seules les traces de course/marche passant dans l'arène entre le **1er novembre** et le **31 décembre 2026** sont prises en compte.")
+
+    with st.form("upload_form_multi", border=False):
+        external_files_m = st.file_uploader(
+            "Ajoute tes fichiers .fit ou .fit.gz ici",
+            type=["fit", "fit.gz"],
+            accept_multiple_files=True,
+            key="upload_multi"
+        )
+        bouton_analyse_m = st.form_submit_button("Analyser ces traces", key="analyse_multi")
+
+    if external_files_m and bouton_analyse_m:
+        barre_prog_m = st.progress(0)
+        st.session_state.tuiles_m.clear()
+        st.session_state.tile_counts_m.clear()
+        st.session_state.tile_first_dates_m.clear()
+        st.session_state.traces_m.clear()
+
+        with st.spinner("Analyse des traces en cours..."):
+            tuiles_m, traces_m, tile_counts_m, tile_first_dates_m = analyser_fit(
+                external_files_m, center_co_m, n_m, tile_length_m, barre_prog_m, mode="multi"
+            )
+            st.session_state.tuiles_m.update(tuiles_m)
+            st.session_state.tile_counts_m.update(tile_counts_m)
+            st.session_state.tile_first_dates_m.update(tile_first_dates_m)
+            st.session_state.traces_m.extend(traces_m)
+
+        barre_prog_m.empty()
+
+        # On stocke le message de retour avant de relancer l'affichage de la carte
+        if len(st.session_state.traces_m) > 0:
+            total_passages = sum(st.session_state.tile_counts_m.values())
+            st.session_state["analyse_msg_m"] = (
+                "success",
+                f"{len(st.session_state.traces_m)} activité(s) valide(s) affichée(s) sur la carte : {len(st.session_state.tuiles_m)} cases touchées ({total_passages} passages au total)."
+            )
+        else:
+            st.session_state["analyse_msg_m"] = (
+                "warning",
+                "Aucune activité valide trouvée (vérifie le sport, la zone et les dates Nov/Déc 2026)."
+            )
+
+        st.rerun() # Force la carte au-dessus à se mettre à jour immédiatement
+
+    # Affichage persistant du résultat de la dernière analyse
+    msg_info = st.session_state.get("analyse_msg_m")
+    if msg_info:
+        if msg_info[0] == "success":
+            st.success(msg_info[1])
+        else:
+            st.warning(msg_info[1])
+
+    # --- 2️⃣ SAUVEGARDE DÉFINITIVE (JUSTE EN DESSOUS) ---
     st.markdown("---")
     st.markdown("### 2️⃣ Enregistrer ma contribution")
 
@@ -319,7 +315,6 @@ if onglet_actif == "MULTIPLAYER MODE":
                 tuiles_tot_m = set(st.session_state.tuiles_m)
                 traces_tot_m = features_m.copy()
 
-                # Conversion des clés (x, y) en chaînes "x,y" pour MongoDB
                 tile_counts_tot = {f"{x},{y}": count for (x, y), count in st.session_state.tile_counts_m.items()}
                 tile_first_dates_tot = {f"{x},{y}": d for (x, y), d in st.session_state.tile_first_dates_m.items()}
 
@@ -333,7 +328,6 @@ if onglet_actif == "MULTIPLAYER MODE":
                     if "features" in anciennes_data_m:
                         traces_tot_m.extend(anciennes_data_m["features"])
 
-                    # Fusion des compteurs de passages
                     anciens_counts = anciennes_data_m.get("tile_counts", {})
                     if not anciens_counts and "tiles_conquered" in anciennes_data_m:
                         anciens_counts = {f"{t[0]},{t[1]}": 1 for t in anciennes_data_m["tiles_conquered"]}
@@ -341,7 +335,8 @@ if onglet_actif == "MULTIPLAYER MODE":
                     for k, v in anciens_counts.items():
                         tile_counts_tot[k] = tile_counts_tot.get(k, 0) + v
 
-                    for k,d in anciennes_data_m.get("tile_first_dates", {}).items():
+                    anciennes_dates = anciennes_data_m.get("tile_first_dates", {})
+                    for k, d in anciennes_dates.items():
                         if k not in tile_first_dates_tot or d < tile_first_dates_tot[k]:
                             tile_first_dates_tot[k] = d
 
@@ -362,14 +357,14 @@ if onglet_actif == "MULTIPLAYER MODE":
 
             st.session_state.tuiles_m.clear()
             st.session_state.tile_counts_m.clear()
-            st.session_state.traces_m.clear()
             st.session_state.tile_first_dates_m.clear()
+            st.session_state.traces_m.clear()
+            st.session_state.pop("analyse_msg_m", None)
 
             time.sleep(2)
             st.rerun()
         else:
-            st.warning("Merci d'entrer ton nom et d'analyser au moins une activité valide (Novembre/Décembre 2026 dans la zone) avant d'enregistrer.")
-
+            st.warning("Merci d'entrer ton nom et d'analyser au moins une activité valide (Novembre/Décembre 2026 et dans la zone) avant d'enregistrer.")
 # =========================================================================================
 # ONGLET 2 : LA CARTE PERSONNELLE (SOLO)
 # =========================================================================================
