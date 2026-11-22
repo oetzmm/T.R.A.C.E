@@ -576,14 +576,26 @@ elif onglet_actif == "LEADERBOARDS":
         ]
         st.dataframe(tableau_detail, use_container_width=True, hide_index=True)
 
-        # Barre de rapport de force entre les deux équipes
+        # Barre bicolore de rapport de force entre les deux équipes
         total_pts_global = stats_eq1["total_points"] + stats_eq2["total_points"]
         if total_pts_global > 0:
-            part_eq1 = stats_eq1["total_points"] / total_pts_global
-            st.progress(part_eq1, text=f"Part des points : A1/A2 ({part_eq1*100:.1f}%) vs A3 ({(1-part_eq1)*100:.1f}%)")
+            pct_eq1 = (stats_eq1["total_points"] / total_pts_global) * 100
+            pct_eq2 = 100 - pct_eq1
+
+            st.markdown(f"""
+            <div style="margin-top: 12px; margin-bottom: 16px;">
+                <div style="display: flex; justify-content: space-between; font-weight: 600; font-size: 0.95rem; margin-bottom: 6px;">
+                    <span style="color: #3296FF;">🟦 A1/A2 : {pct_eq1:.1f}% ({stats_eq1['total_points']} pts)</span>
+                    <span style="color: #FF3232;">{pct_eq2:.1f}% ({stats_eq2['total_points']} pts) : A3 🟥</span>
+                </div>
+                <div style="display: flex; width: 100%; height: 22px; border-radius: 11px; overflow: hidden; background-color: #262730; box-shadow: inset 0 1px 3px rgba(0,0,0,0.4);">
+                    <div style="width: {pct_eq1:.2f}%; background: linear-gradient(90deg, #0077CC, #3296FF); transition: width 0.5s ease;"></div>
+                    <div style="width: {pct_eq2:.2f}%; background: linear-gradient(90deg, #FF3232, #CC0000); transition: width 0.5s ease;"></div>
+                </div>
+            </div>
+            """, unsafe_allow_html=True)
         else:
             st.info("Aucun point enregistré pour le moment sur la Saison 2.")
-
             tableau_detail = [
         {
             "Catégorie de points": "🚩 1ères conquêtes (10 pts / case)",
@@ -660,7 +672,7 @@ elif onglet_actif == "GAMERULES":
     | 🤝 **Tu découvres une case déjà débloquée par un coéquipier** (ton 1er passage perso) | **+7 pts** |
     | 🔁 **Tu repasses une 2ème fois** dans une case où tu es déjà allé(e) | **+5 pts** |
     | ✨ **Tu y repasses une 3ème fois, 4ème fois, etc.** | **+1 pt** par sortie |
-    | ⚠️ **Un seul passage par sortie** est comptabilisé pour une case donnée (même si tu passes plusieurs fois dans la même case lors de la même sortie). |
+    | ⚠️ **Un seul passage par sortie** est comptabilisé pour une case donnée (même si tu passes plusieurs fois dans la même case lors d'une sortie). |
     ### ⚙️ Comment participer ?
     1. Récupérez vos sorties en fichiers `.fit` ou `.fit.gz` depuis Strava, Garmin, Coros, Polar ou Suunto.
     2. Dans **MULTIPLAYER MODE**, uploadez vos fichiers et cliquez sur *Analyser ces traces*.
