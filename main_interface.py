@@ -136,7 +136,33 @@ onglet_actif = st.pills(
 # ONGLET 1 : MODE COLLECTIF (MULTIPLAYER)
 # =========================================================================================
 if onglet_actif == "MULTIPLAYER MODE":
-    st.subheader("🌍 Mode Collectif -- ENSMA -- Saison 2 (1er Novembre - 31 Décembre 2026)")
+    st.subheader("🌍 Mode par équipes -- ENSMA -- Saison 2 (1er Novembre - 31 Décembre 2026)")
+
+    tous_les_joueurs_m = list(col_multi.find({}, {"_id": 0}))
+
+    joueurs_eq1 = [d for d in tous_les_joueurs_m if d.get("equipe") == "A1/A2"]
+    joueurs_eq2 = [d for d in tous_les_joueurs_m if d.get("equipe") == "A3"]
+
+    stats_eq1 = calculer_details_equipe(joueurs_eq1)
+    stats_eq2 = calculer_details_equipe(joueurs_eq2)
+
+    # Compteurs globaux en gros
+    m1, m2 = st.columns(2)
+    with m1:
+        st.metric(
+            label="🟦 Équipe A1/A2",
+            value=f"{stats_eq1['total_points']} pts",
+            delta=f"{stats_eq1['cases_debloquees']} cases ({100 * stats_eq1['cases_debloquees'] / (n_m**2):.1f}%)"
+        )
+    with m2:
+        st.metric(
+            label="🟥 Équipe A3",
+            value=f"{stats_eq2['total_points']} pts",
+            delta=f"{stats_eq2['cases_debloquees']} cases ({100 * stats_eq2['cases_debloquees'] / (n_m**2):.1f}%)"
+        )
+
+    st.divider()
+    
     st.markdown("### 1️⃣ Ajout de tes traces")
     st.markdown("Ajoute tes fichiers `.fit` ou `.fit.gz` pour faire marquer des points à ton équipe, puis sauvegarde ta contribution en bas de page.")
     st.info("⚠️ Seules les traces de course/marche passant dans l'arène entre le **1er novembre** et le **31 décembre 2026** sont prises en compte.")
@@ -535,18 +561,7 @@ elif onglet_actif == "SOLO MODE":
 elif onglet_actif == "LEADERBOARDS":
     st.header("🏆 Classements")
 
-    # Style de la ligne verticale uniquement sur la colonne qui contient notre repère
-    st.markdown(
-        "<style>"
-        'div[data-testid="stColumn"]:has(.sep-leaderboard),'
-        'div[data-testid="column"]:has(.sep-leaderboard) {'
-        "border-right: 2px solid rgba(255, 255, 255, 0.2) !important;"
-        "padding-right: 2rem !important;"
-        "}"
-        "</style>",
-        unsafe_allow_html=True)
-
-    col_m, col_p = st.columns(2)
+    col_m, col_p = st.columns(2,gap = "medium")
 
     # --- CLASSEMENT 1 : COLLECTIF UNIQUEMENT (DÉTAIL DES POINTS PAR ÉQUIPE) ---
     with col_m:
