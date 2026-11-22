@@ -25,6 +25,7 @@ def analyser_fit(files_upload, center_co, n, tile_length, progress_bar, mode="mu
     """
     tiles_conquered = set()
     tile_counts = {}
+    tile_first_dates = {}
     total_coordinates = []
     geojson_data = {
         "type": "FeatureCollection",
@@ -137,11 +138,13 @@ def analyser_fit(files_upload, center_co, n, tile_length, progress_bar, mode="mu
         # Validation et sauvegarde finale
         if act_valid and (sport_type == "Unknown" or sport_type in sports_autorises) and len(coordinates) > 1 and len(tuiles_fichier) > 0:
             tiles_conquered.update(tuiles_fichier)
+            date_str = str(sport_date) if sport_date is not None else "9999-12-31"
 
             # On incrémente de +1 chaque tuile traversée lors de CETTE sortie
             for tuile in tuiles_fichier:
                 tile_counts[tuile] = tile_counts.get(tuile, 0) + 1
-
+                if tuile not in tile_first_dates or date_str < tile_first_dates[tuile]:
+                    tile_first_dates[tuile] = date_str
             track_color = [252, 76, 2] if mode == "multi" else [255, 87, 34]
             feature = {
                 "type": "Feature",
