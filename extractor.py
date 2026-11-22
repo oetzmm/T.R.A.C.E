@@ -166,4 +166,4 @@ def analyser_fit(files_upload, center_co, n, tile_length, progress_bar, mode="mu
         else:
             print(f"Trace IGNORÉE ({mode}) : {file.name} - Sport: {sport_type} - Date: {sport_date}")
 
-    return tiles_conquered, total_coordinates, tile_counts
+    return tiles_conquered, total_coordinates, tile_counts, tile_first_dates
