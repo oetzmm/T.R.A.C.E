@@ -152,16 +152,20 @@ if onglet_actif == "MULTIPLAYER MODE":
     # Compteurs globaux en gros
     m1, m2 = st.columns(2)
     with m1:
+        st.markdown("### 🟦 Équipe A1/A2")
         st.metric(
-            label="🟦 Équipe A1/A2",
+            label="Équipe A1/A2",
             value=f"{stats_eq1['total_points']} pts",
-            delta=f"{stats_eq1['cases_debloquees']} cases ({100 * stats_eq1['cases_debloquees'] / (n_m**2):.1f}%)"
+            delta=f"{stats_eq1['cases_debloquees']} cases ({100 * stats_eq1['cases_debloquees'] / (n_m**2):.1f}%)",
+            label_visibility="collapsed"
         )
     with m2:
+        st.markdown("### 🟥 Équipe A3")
         st.metric(
-            label="🟥 Équipe A3",
+            label="Équipe A3",
             value=f"{stats_eq2['total_points']} pts",
-            delta=f"{stats_eq2['cases_debloquees']} cases ({100 * stats_eq2['cases_debloquees'] / (n_m**2):.1f}%)"
+            delta=f"{stats_eq2['cases_debloquees']} cases ({100 * stats_eq2['cases_debloquees'] / (n_m**2):.1f}%)",
+            label_visibility="collapsed"
         )
 
     st.divider()
