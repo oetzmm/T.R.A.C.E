@@ -622,34 +622,34 @@ elif onglet_actif == "LEADERBOARDS":
         else:
             st.info("Aucun point enregistré pour le moment sur la Saison 2.")
 
-    # --- TABLEAUX DES CONTRIBUTIONS PAR ÉQUIPE ---
-    st.markdown("### 👥 Contributions par équipe")
-    col_tab1, col_tab2 = st.columns(2)
+        # --- TABLEAUX DES CONTRIBUTIONS PAR ÉQUIPE ---
+        st.markdown("### 👥 Contributions des joueurs")
+        col_tab1, col_tab2 = st.columns(2)
 
-    for col_tab, titre_eq, stats_eq in [
-        (col_tab1, "🟦 Équipe A1/A2", stats_eq1),
-        (col_tab2, "🟥 Équipe A3", stats_eq2)
-    ]:
-        with col_tab:
-            st.markdown(f"**{titre_eq}**")
-            total_eq = stats_eq["total_points"]
-            contribs = sorted(
-                stats_eq["points_par_joueur"].items(),
-                key=lambda x: x[1],
-                reverse=True
-            )
+        for col_tab, titre_eq, stats_eq in [
+            (col_tab1, "🟦 Équipe A1/A2", stats_eq1),
+            (col_tab2, "🟥 Équipe A3", stats_eq2)
+        ]:
+            with col_tab:
+                st.markdown(f"**{titre_eq}**")
+                total_eq = stats_eq["total_points"]
+                contribs = sorted(
+                    stats_eq["points_par_joueur"].items(),
+                    key=lambda x: x[1],
+                    reverse=True
+                )
 
-            if contribs:
-                lignes = []
-                for pseudo, pts in contribs:
-                    pct = (pts / total_eq * 100) if total_eq > 0 else 0.0
-                    lignes.append({
-                        "Pseudo": pseudo,
-                        "Score": f"{pts} pts ({pct:.1f}%)"
-                    })
-                st.dataframe(lignes, use_container_width=True, hide_index=True)
-            else:
-                st.info("Aucun participant pour le moment.")
+                if contribs:
+                    lignes = []
+                    for pseudo, pts in contribs:
+                        pct = (pts / total_eq * 100) if total_eq > 0 else 0.0
+                        lignes.append({
+                            "Pseudo": pseudo,
+                            "Score": f"{pts} pts ({pct:.1f}%)"
+                        })
+                    st.dataframe(lignes, use_container_width=True, hide_index=True)
+                else:
+                    st.info("Aucun participant pour le moment.")
 
         
     # --- CLASSEMENT 2 : CHACUN CHEZ SOI (SOLO) ---
