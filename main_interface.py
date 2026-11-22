@@ -200,9 +200,9 @@ if onglet_actif == "MULTIPLAYER MODE":
     # Affichage UNIQUEMENT par équipes
     c_eq1, c_eq2 = st.columns(2)
     with c_eq1:
-        afficher_eq1 = st.checkbox("Afficher les traces A1/A2 🟦", value=False)
+        afficher_eq1 = st.checkbox("Afficher les traces A1/A2 🟦", value=True)
     with c_eq2:
-        afficher_eq2 = st.checkbox("Afficher les traces A3 🟥", value=False)
+        afficher_eq2 = st.checkbox("Afficher les traces A3 🟥", value=True)
 
     for team_name, is_checked, team_color in [
         ("A1/A2", afficher_eq1, [50, 150, 255]),
