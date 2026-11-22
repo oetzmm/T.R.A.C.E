@@ -645,7 +645,8 @@ elif onglet_actif == "LEADERBOARDS":
                         pct = (pts / total_eq * 100) if total_eq > 0 else 0.0
                         lignes.append({
                             "Pseudo": pseudo,
-                            "Score": f"{pts} pts ({pct:.1f}%)"
+                            "Score": f"{pts} pts",
+                            "% dans l'équipe": f"{pct:.1f}%"
                         })
                     st.dataframe(lignes, use_container_width=True, hide_index=True)
                 else:
