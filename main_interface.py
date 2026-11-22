@@ -536,15 +536,15 @@ elif onglet_actif == "LEADERBOARDS":
     st.header("🏆 Classements")
 
     # Style de la ligne verticale uniquement sur la colonne qui contient notre repère
-    st.markdown("""
-    <style>
-        div[data-testid="stColumn"]:has(.sep-leaderboard),
-        div[data-testid="column"]:has(.sep-leaderboard) {
-            border-right: 1px solid rgba(150, 150, 150, 0.35);
-            padding-right: 2rem;
-        }
-    </style>
-    """, unsafe_allow_html=True)
+    st.markdown(
+        "<style>"
+        'div[data-testid="stColumn"]:has(.sep-leaderboard),'
+        'div[data-testid="column"]:has(.sep-leaderboard) {'
+        "border-right: 2px solid rgba(255, 255, 255, 0.2) !important;"
+        "padding-right: 2rem !important;"
+        "}"
+        "</style>",
+        unsafe_allow_html=True)
 
     col_m, col_p = st.columns(2)
 
