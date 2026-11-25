@@ -224,7 +224,7 @@ st.title("T.R.A.C.E. - Territory Run and Amazing Challenge of Exploration", text
 onglet_actif = st.pills(
     "Navigation",
     options=["MODE PAR ÉQUIPE", "MODE SOLO", "CLASSEMENTS", "RÈGLES DU JEU"],
-    default="GAMERULES",
+    default="RÈGLES DU JEU",
     required=True,
     label_visibility="collapsed",
     width="stretch",
