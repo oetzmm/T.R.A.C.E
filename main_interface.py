@@ -119,7 +119,7 @@ if "last_choix_arene" not in st.session_state:
 if "tile_first_dates_m" not in st.session_state:
     st.session_state.tile_first_dates_m = {}
 if "activities_m" not in st.session_state:
-    st.session_state.activities_m = set()
+    st.session_state.activities_m = []
 
 # --- CONFIGURATION DE LA PAGE ---
 st.set_page_config(page_title="T.R.A.C.E. Viewer", page_icon="🏃", layout="wide")
