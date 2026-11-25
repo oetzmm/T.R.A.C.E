@@ -301,7 +301,7 @@ if onglet_actif == "MULTIPLAYER MODE":
             st.session_state.tile_counts_m.update(tile_counts_m)
             st.session_state.tile_first_dates_m.update(tile_first_dates_m)
             st.session_state.traces_m.extend(traces_m)
-            st.session_state.activities_m.update(activities_m)
+            st.session_state.activities_m.extend(activities_m)
 
         barre_prog_m.empty()
 
