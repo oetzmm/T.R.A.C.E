@@ -79,12 +79,17 @@ def calculer_details_equipe(joueurs_equipe):
     # Structure : { "x,y": [(date_1er_passage, pseudo, nb_passages), ...] }
     passages_par_case = {}
     points_par_joueur = {}
+    nb_activites = 0
 
     for doc in joueurs_equipe:
         pseudo = doc.get("pseudo", "Inconnu")
         points_par_joueur.setdefault(pseudo, 0)
 
         # Compatibilité avec d'anciennes données sans "tile_counts"
+        nb_activites += max(
+            len(doc.get("activity_ids", [])),
+            len(doc.get("features", [])))
+
         counts = doc.get("tile_counts") or {
             f"{t[0]},{t[1]}": 1 for t in doc.get("tiles_conquered", [])
         }
@@ -136,6 +141,7 @@ def calculer_details_equipe(joueurs_equipe):
         "pts_deuxiemes": pts_deuxiemes,
         "pts_bonus": pts_bonus,
         "nb_joueurs": len(joueurs_equipe),
+        "nb_activites": nb_activites,
         "points_par_joueur": points_par_joueur,
     }
 
@@ -692,6 +698,11 @@ elif onglet_actif == "CLASSEMENTS":
                 "🟦 A1/A2": f"{stats_eq1['nb_joueurs']}",
                 "🟥 A3": f"{stats_eq2['nb_joueurs']}",
             },
+            {
+                            "Catégorie de points": "Nombre d'activités de l'équipe",
+                            "🟦 A1/A2": f"{stats_eq1['nb_activites']}",
+                            "🟥 A3": f"{stats_eq2['nb_activites']}",
+                        },
             {
                 "Catégorie de points": "🏆 TOTAL",
                 "🟦 A1/A2": f"{stats_eq1['total_points']} pts",
