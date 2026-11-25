@@ -223,7 +223,7 @@ st.title("T.R.A.C.E. - Territory Run and Amazing Challenge of Exploration", text
 
 onglet_actif = st.pills(
     "Navigation",
-    options=["MULTIPLAYER MODE", "SOLO MODE", "LEADERBOARDS", "GAMERULES"],
+    options=["MODE PAR ÉQUIPE", "MODE SOLO", "CLASSEMENTS", "RÈGLES DU JEU"],
     default="GAMERULES",
     required=True,
     label_visibility="collapsed",
@@ -234,7 +234,7 @@ onglet_actif = st.pills(
 # ==============================================================================
 # 5. ONGLET 1 : MODE COLLECTIF (MULTIPLAYER)
 # ==============================================================================
-if onglet_actif == "MULTIPLAYER MODE":
+if onglet_actif == "MODE PAR ÉQUIPE":
     st.subheader("🌍 Saison 2 -- Choc des PROMOS (1er Novembre - 31 Décembre 2026)")
 
     # --- 5.1 Chargement unique des données et compteurs en tête ---
@@ -456,7 +456,7 @@ if onglet_actif == "MULTIPLAYER MODE":
 # ==============================================================================
 # 6. ONGLET 2 : MODE SOLO (ARÈNE PERSONNELLE)
 # ==============================================================================
-elif onglet_actif == "SOLO MODE":
+elif onglet_actif == "MODE SOLO":
     st.subheader("🏠 Mode solo -- À domicile -- De tout temps")
     st.markdown("Ici, tu peux choisir l'arène de ton choix pour te comparer aux autres « à domicile ».")
 
@@ -648,7 +648,7 @@ elif onglet_actif == "SOLO MODE":
 # ==============================================================================
 # 7. ONGLET 3 : CLASSEMENTS (LEADERBOARDS)
 # ==============================================================================
-elif onglet_actif == "LEADERBOARDS":
+elif onglet_actif == "CLASSEMENTS":
     st.header("🏆 Classements")
 
     col_m, col_p = st.columns(2, gap="medium")
@@ -776,8 +776,10 @@ elif onglet_actif == "LEADERBOARDS":
 # ==============================================================================
 # 8. ONGLET 4 : RÈGLES DU JEU (GAMERULES)
 # ==============================================================================
-elif onglet_actif == "GAMERULES":
-    st.subheader("Comment jouer à T.R.A.C.E. ?")
+elif onglet_actif == "RÈGLES DU JEU":
+
+    st.subheader("Règles du Jeu")
+
     st.markdown("""
     **T.R.A.C.E.** est un jeu de conquête de territoire basé sur vos traces GPS réelles.
     L'arène autour de l'ENSMA est une grille de **9 km × 9 km**, découpée en cases de **300 mètres de côté**.
@@ -787,7 +789,7 @@ elif onglet_actif == "GAMERULES":
     * **Sports autorisés :** Course à pied, trail et marche uniquement.
     * **Objectif :** Faire marquer le maximum de points à son équipe. L'équipe qui a le plus de points au 31 décembre remporte la saison !
 
-    ### 🎯 Comment sont calculés les points ?
+    ### 🎯 Comment gagner des points ?
     Le comptage est **100 % indépendant pour chaque équipe** (ce que fait l'équipe adverse ne vous enlève aucun point). Chaque sortie valide passant dans une case compte pour **1 passage** :
 
     | Situation sur une case (pour ton équipe) | Points gagnés |
