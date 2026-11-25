@@ -304,6 +304,7 @@ if onglet_actif == "MULTIPLAYER MODE":
         )
 
     afficher_carte(layers_m, CENTER_CO_M)
+    st.markdown(f"### Arène par équipe : {N_M}×{N_M} tuiles de {int(TILE_LENGTH_M * 1000)} m de côté")
 
     # --- 5.4 Bloc 1 : Upload et analyse des traces ---
     st.divider()
@@ -343,12 +344,12 @@ if onglet_actif == "MULTIPLAYER MODE":
             st.session_state["analyse_msg_m"] = (
                 "success",
                 f"{len(st.session_state.activities_m)} activité(s) valide(s) affichée(s) sur la carte : "
-                f"{len(st.session_state.tuiles_m)} cases touchées ({total_passages} passages au total).",
+                f"{len(st.session_state.tuiles_m)} cases touchées.",
             )
         else:
             st.session_state["analyse_msg_m"] = (
                 "warning",
-                "Aucune activité valide trouvée (vérifie le sport, la zone et les dates Nov/Déc 2026).",
+                "Aucune activité valide trouvée, vérifie le sport, la zone et les dates (Nov/Déc 2026).",
             )
         st.rerun()
 
@@ -367,7 +368,7 @@ if onglet_actif == "MULTIPLAYER MODE":
     with col_eq:
         equipe = st.selectbox("Ton équipe :", options=list(EQUIPES.keys()), key="equipe_multi")
 
-    if st.button("Sauvegarder pour mon équipe", key="sauvegarde_multi", type="primary"):
+    if st.button("Sauvegarder", key="sauvegarde_multi", type="primary"):
         pseudo_clean = pseudo_m.strip()
         if pseudo_clean and st.session_state.activities_m:
             with st.spinner("Sauvegarde en cours..."):
