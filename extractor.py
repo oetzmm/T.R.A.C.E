@@ -17,20 +17,12 @@ def semicircles_to_degrees(semicircles):
 ## ----------------FONCTION D'ANALYSE DES FICHIERS FIT---------------
 
 def analyser_fit(files_upload, center_co, n, tile_length, progress_bar, mode="multi"):
-    """
-    Prend une liste de fichiers uploadés via Streamlit et renvoie :
-    - tiles_conquered : set des tuiles uniques (x, y)
-    - total_coordinates : liste des traces valides
-    - tile_counts : dictionnaire {(x, y): nb_passages} (1 passage max par activité)
-    """
     tiles_conquered = set()
     tile_counts = {}
     tile_first_dates = {}
     total_coordinates = []
-    geojson_data = {
-        "type": "FeatureCollection",
-        "features": []
-    }
+    activities_list = []      # Liste propre par activité (pour l'anti-doublon)
+    seen_activities = set()   # Bloque les doublons au sein d'un même upload
 
     center_lat, center_lon = center_co
     step_lat = tile_length / 111.32
@@ -41,7 +33,6 @@ def analyser_fit(files_upload, center_co, n, tile_length, progress_bar, mode="mu
     min_lon = center_lon - (n * step_lon * 0.5)
     max_lon = center_lon + (n * step_lon * 0.5)
 
-    # Configuration des sports autorisés
     sports_autorises = [
         'running', 'walking', 'hiking', 'trail_running', 'mountaineering',
         'track_running', 'track_field', 'generic', '1', '11', '17'
@@ -61,7 +52,7 @@ def analyser_fit(files_upload, center_co, n, tile_length, progress_bar, mode="mu
             fitfile = FitFile(file)
 
         coordinates = []
-        tuiles_fichier = set() # Un set par fichier => max 1 passage par case pour une même sortie
+        tuiles_fichier = set() # 🚨 Garantit 1 seul passage max par case pour CE fichier
         sport_type = "Unknown"
         sport_date = None
         act_valid = True
@@ -71,13 +62,11 @@ def analyser_fit(files_upload, center_co, n, tile_length, progress_bar, mode="mu
             record_count = 0
             date_validated = False
             for message in fitfile.get_messages():
-                # --- Détection de la marque ---
                 if message.name == 'file_id':
                     val = message.get_value('manufacturer')
                     if val is not None:
                         marque_montre = str(val)
 
-                # --- Intercepteur précoce ---
                 elif message.name == 'sport':
                     val = message.get_value('sport') or message.get_value('sub_sport')
                     if val is not None:
@@ -86,7 +75,6 @@ def analyser_fit(files_upload, center_co, n, tile_length, progress_bar, mode="mu
                             act_valid = False
                             break
 
-                # --- Lecture d'en-tête (GARMIN/POLAR) ---
                 elif message.name == 'session':
                     if sport_type == "Unknown":
                         val = message.get_value('sport') or message.get_value('sub_sport')
@@ -98,14 +86,11 @@ def analyser_fit(files_upload, center_co, n, tile_length, progress_bar, mode="mu
                     if sport_date is None:
                         sport_date = message.get_value('start_time')
 
-                # --- Lecture des points GPS (COROS et extraction) ---
                 elif message.name == 'record':
                     if sport_date is None:
                         sport_date = message.get_value('timestamp')
-
-                    # Validation Saison 2 : du 1er Novembre au 31 Décembre 2026
                     if mode == "multi" and sport_date is not None and not date_validated:
-                        if (sport_date.month not in mois) or (sport_date.year not in annee):
+                        if (sport_date.month not in [11, 12]) or (sport_date.year != 2026):
                             act_valid = False
                             break
                         date_validated = True
@@ -131,39 +116,34 @@ def analyser_fit(files_upload, center_co, n, tile_length, progress_bar, mode="mu
                         if (min_lat <= lat <= max_lat) and (min_lon <= lon <= max_lon):
                             xtile = math.floor((lon - min_lon) / step_lon)
                             ytile = math.floor((lat - min_lat) / step_lat)
-                            tuiles_fichier.add((xtile, ytile))
+                            tuiles_fichier.add((xtile, ytile)) # UNIQUEMENT dans le set ici !
         except Exception:
             pass
 
-        # Validation et sauvegarde finale
+        # --- VALIDATION EN DEHORS DE LA BOUCLE DES POINTS GPS ---
         if act_valid and (sport_type == "Unknown" or sport_type in sports_autorises) and len(coordinates) > 1 and len(tuiles_fichier) > 0:
-            tiles_conquered.update(tuiles_fichier)
             date_str = str(sport_date) if sport_date is not None else "9999-12-31"
+            act_id = date_str if sport_date is not None else file.name
 
-            # On incrémente de +1 chaque tuile traversée lors de CETTE sortie
+            # On ignore si cette même sortie est en double dans l'upload
+            if act_id in seen_activities:
+                continue
+            seen_activities.add(act_id)
+
+            tiles_conquered.update(tuiles_fichier)
+            total_coordinates.append(coordinates)
+
+            # +1 exactement par tuile unique de CETTE sortie
             for tuile in tuiles_fichier:
                 tile_counts[tuile] = tile_counts.get(tuile, 0) + 1
                 if tuile not in tile_first_dates or date_str < tile_first_dates[tuile]:
                     tile_first_dates[tuile] = date_str
-            track_color = [252, 76, 2] if mode == "multi" else [255, 87, 34]
-            feature = {
-                "type": "Feature",
-                "geometry": {
-                    "type": "LineString",
-                    "coordinates": coordinates
-                },
-                "properties": {
-                    "nomFichier": file.name,
-                    "sport": sport_type,
-                    "color": track_color,
-                    "date": str(sport_date),
-                    "watch_brand": marque_montre,
-                }
-            }
-            geojson_data["features"].append(feature)
-            total_coordinates.append(coordinates)
-            print(f"Trace OK ({mode}) : {file.name} - Sport: {sport_type} - Date: {sport_date} - Points: {len(coordinates)}")
-        else:
-            print(f"Trace IGNORÉE ({mode}) : {file.name} - Sport: {sport_type} - Date: {sport_date}")
 
-    return tiles_conquered, total_coordinates, tile_counts, tile_first_dates
+            activities_list.append({
+                "id": act_id,
+                "date": date_str,
+                "tiles": list(tuiles_fichier),
+                "coords": coordinates
+            })
+
+    return tiles_conquered, total_coordinates, tile_counts, tile_first_dates, activities_list
