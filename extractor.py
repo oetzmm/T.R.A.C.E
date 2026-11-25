@@ -15,8 +15,6 @@ SPORTS_AUTORISES = {
 }
 
 gap_ech = 10  # Garde 1 point GPS sur 10 pour alléger la carte
-KM_PAR_DEGRE_LAT = 111.32
-
 
 # ==============================================================================
 # FONCTIONS UTILITAIRES
@@ -60,8 +58,8 @@ def analyser_fit(files_upload, center_co, n, tile_length, progress_bar=None, mod
 
     # Limites géographiques de l'arène
     center_lat, center_lon = center_co
-    step_lat = tile_length / KM_PAR_DEGRE_LAT
-    step_lon = tile_length / (KM_PAR_DEGRE_LAT * math.cos(math.radians(center_lat)))
+    step_lat = tile_length / 111.32
+    step_lon = tile_length / (111.32 * math.cos(math.radians(center_lat)))
 
     min_lat = center_lat - (n * step_lat * 0.5)
     max_lat = center_lat + (n * step_lat * 0.5)
