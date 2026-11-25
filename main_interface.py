@@ -118,6 +118,8 @@ if "last_choix_arene" not in st.session_state:
     st.session_state.last_choix_arene = None
 if "tile_first_dates_m" not in st.session_state:
     st.session_state.tile_first_dates_m = {}
+if "activities_m" not in st.session_state:
+    st.session_state.activities_m = set()
 
 # --- CONFIGURATION DE LA PAGE ---
 st.set_page_config(page_title="T.R.A.C.E. Viewer", page_icon="🏃", layout="wide")
@@ -289,15 +291,17 @@ if onglet_actif == "MULTIPLAYER MODE":
         st.session_state.tile_counts_m.clear()
         st.session_state.tile_first_dates_m.clear()
         st.session_state.traces_m.clear()
+        st.session_state.activities_m.clear()
 
         with st.spinner("Analyse des traces en cours..."):
-            tuiles_m, traces_m, tile_counts_m, tile_first_dates_m = analyser_fit(
+            tuiles_m, traces_m, tile_counts_m, tile_first_dates_m, activities_m = analyser_fit(
                 external_files_m, center_co_m, n_m, tile_length_m, barre_prog_m, mode="multi"
             )
             st.session_state.tuiles_m.update(tuiles_m)
             st.session_state.tile_counts_m.update(tile_counts_m)
             st.session_state.tile_first_dates_m.update(tile_first_dates_m)
             st.session_state.traces_m.extend(traces_m)
+            st.session_state.activities_m.update(activities_m)
 
         barre_prog_m.empty()
 
@@ -336,59 +340,78 @@ if onglet_actif == "MULTIPLAYER MODE":
 
     if st.button("Sauvegarder pour mon équipe", key="sauvegarde_multi", type="primary"):
         pseudo_clean = pseudo_m.strip()
-        if pseudo_clean and features_m:
+        if pseudo_clean and st.session_state.activities_m:
             with st.spinner("Sauvegarde en cours..."):
-                tuiles_tot_m = set(st.session_state.tuiles_m)
-                traces_tot_m = features_m.copy()
-
-                tile_counts_tot = {f"{x},{y}": count for (x, y), count in st.session_state.tile_counts_m.items()}
-                tile_first_dates_tot = {f"{x},{y}": d for (x, y), d in st.session_state.tile_first_dates_m.items()}
-
                 anciennes_data_m = col_multi.find_one({"pseudo": pseudo_clean, "equipe": equipe}, {"_id": 0})
+                
+                tuiles_tot_m = set()
+                traces_tot_m = []
+                tile_counts_tot = {}
+                tile_first_dates_tot = {}
+                saved_activity_ids = set()
 
                 if anciennes_data_m:
-                    if "tiles_conquered" in anciennes_data_m:
-                        anciennes_tuiles_m = [tuple(t) if isinstance(t, list) else t for t in anciennes_data_m["tiles_conquered"]]
-                        tuiles_tot_m.update(anciennes_tuiles_m)
+                    tuiles_tot_m.update(tuple(t) if isinstance(t, list) else t for t in anciennes_data_m.get("tiles_conquered", []))
+                    traces_tot_m.extend(anciennes_data_m.get("features", []))
+                    tile_counts_tot.update(anciennes_data_m.get("tile_counts", {}))
+                    tile_first_dates_tot.update(anciennes_data_m.get("tile_first_dates", {}))
+                    saved_activity_ids.update(anciennes_data_m.get("activity_ids", []))
 
-                    if "features" in anciennes_data_m:
-                        traces_tot_m.extend(anciennes_data_m["features"])
+                nb_ajoutees = 0
+                nb_doublons = 0
 
-                    anciens_counts = anciennes_data_m.get("tile_counts", {})
-                    if not anciens_counts and "tiles_conquered" in anciennes_data_m:
-                        anciens_counts = {f"{t[0]},{t[1]}": 1 for t in anciennes_data_m["tiles_conquered"]}
+                for act in st.session_state.activities_m:
+                    if act["id"] in saved_activity_ids:
+                        nb_doublons += 1
+                        continue
 
-                    for k, v in anciens_counts.items():
-                        tile_counts_tot[k] = tile_counts_tot.get(k, 0) + v
+                    saved_activity_ids.add(act["id"])
+                    nb_ajoutees += 1
 
-                    anciennes_dates = anciennes_data_m.get("tile_first_dates", {})
-                    for k, d in anciennes_dates.items():
-                        if k not in tile_first_dates_tot or d < tile_first_dates_tot[k]:
-                            tile_first_dates_tot[k] = d
+                    # Ajout de la trace
+                    traces_tot_m.append({
+                        "type": "Feature",
+                        "geometry": {"type": "LineString", "coordinates": act["coords"]}
+                    })
 
-                geojson_final_m = {
-                    "pseudo": pseudo_clean,
-                    "equipe": equipe,
-                    "type": "FeatureCollection",
-                    "score": len(tuiles_tot_m),
-                    "tiles_conquered": list(tuiles_tot_m),
-                    "tile_counts": tile_counts_tot,
-                    "tile_first_dates": tile_first_dates_tot,
-                    "features": traces_tot_m
-                }
+                    # +1 exactement par tuile unique de cette activité
+                    for (x, y) in set(tuple(t) for t in act["tiles"]):
+                        tuiles_tot_m.add((x, y))
+                        key = f"{x},{y}"
+                        tile_counts_tot[key] = tile_counts_tot.get(key, 0) + 1
+                        if key not in tile_first_dates_tot or act["date"] < tile_first_dates_tot[key]:
+                            tile_first_dates_tot[key] = act["date"]
 
-                col_multi.replace_one({"pseudo": pseudo_clean, "equipe": equipe}, geojson_final_m, upsert=True)
+                if nb_ajoutees == 0:
+                    st.warning("Cette ou ces activité(s) ont déjà été enregistrées pour ton pseudo !")
+                else:
+                    geojson_final_m = {
+                        "pseudo": pseudo_clean,
+                        "equipe": equipe,
+                        "type": "FeatureCollection",
+                        "score": len(tuiles_tot_m),
+                        "tiles_conquered": list(tuiles_tot_m),
+                        "tile_counts": tile_counts_tot,
+                        "tile_first_dates": tile_first_dates_tot,
+                        "activity_ids": list(saved_activity_ids),
+                        "features": traces_tot_m
+                    }
+                    col_multi.replace_one({"pseudo": pseudo_clean, "equipe": equipe}, geojson_final_m, upsert=True)
 
-            st.success(f"Bravo {pseudo_clean} ! Tes traces ont bien été ajoutées à l'équipe **{equipe}**.")
+                    msg = f"Bravo {pseudo_clean} ! {nb_ajoutees} nouvelle(s) activité(s) ajoutée(s) à l'équipe **{equipe}**."
+                    if nb_doublons > 0:
+                        msg += f" ({nb_doublons} doublon(s) ignoré(s).)"
+                    st.success(msg)
 
-            st.session_state.tuiles_m.clear()
-            st.session_state.tile_counts_m.clear()
-            st.session_state.tile_first_dates_m.clear()
-            st.session_state.traces_m.clear()
-            st.session_state.pop("analyse_msg_m", None)
+                    st.session_state.tuiles_m.clear()
+                    st.session_state.tile_counts_m.clear()
+                    st.session_state.tile_first_dates_m.clear()
+                    st.session_state.traces_m.clear()
+                    st.session_state.activities_m.clear()
+                    st.session_state.pop("analyse_msg_m", None)
 
-            time.sleep(2)
-            st.rerun()
+                    time.sleep(2)
+                    st.rerun()
         else:
             st.warning("Merci d'entrer ton nom et d'analyser au moins une activité valide (Novembre/Décembre 2026 et dans la zone) avant d'enregistrer.")
 # =========================================================================================
