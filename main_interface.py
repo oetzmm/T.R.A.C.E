@@ -699,7 +699,7 @@ elif onglet_actif == "CLASSEMENTS":
                 "🟥 A3": f"{stats_eq2['nb_joueurs']}",
             },
             {
-                            "Catégorie de points": "Nombre d'activités de l'équipe",
+                            "Catégorie de points": "🎯Nombre d'activités de l'équipe",
                             "🟦 A1/A2": f"{stats_eq1['nb_activites']}",
                             "🟥 A3": f"{stats_eq2['nb_activites']}",
                         },
