@@ -434,7 +434,7 @@ if onglet_actif == "MULTIPLAYER MODE":
                         {"pseudo": pseudo_clean, "equipe": equipe}, geojson_final, upsert=True
                     )
 
-                    msg = f"Bravo {pseudo_clean} ! {nb_ajoutees} nouvelle(s) activité(s) ajoutée(s) à l'équipe **{equipe}**."
+                    msg = f"{pseudo_clean} : {nb_ajoutees} nouvelle(s) activité(s) ajoutée(s) à l'équipe **{equipe}**."
                     if nb_doublons > 0:
                         msg += f" ({nb_doublons} doublon(s) ignoré(s).)"
                     st.success(msg)
