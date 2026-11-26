@@ -127,20 +127,20 @@ def analyser_fit(files_upload, center_co, n, tile_length, progress_bar=None, mod
                                 act_valid = False
                                 break
 
-                    # Sous-échantillonnage des points GPS
-                    record_count += 1
-                    if record_count % gap_ech != 0:
-                        continue
-
                     lat = semicircles_to_degrees(message.get_value("position_lat"))
                     lon = semicircles_to_degrees(message.get_value("position_long"))
 
                     if lat is not None and lon is not None:
-                        coordinates.append([lon, lat])
                         if (min_lat <= lat <= max_lat) and (min_lon <= lon <= max_lon):
                             xtile = math.floor((lon - min_lon) / step_lon)
                             ytile = math.floor((lat - min_lat) / step_lat)
                             tuiles_fichier.add((xtile, ytile))
+
+                        # Sous-échantillonnage des points GPS
+                        record_count += 1
+                        if record_count % gap_ech == 0:
+                            coordinates.append([round(lon, 5), round(lat, 5)])
+
         except Exception:
             # Fichier corrompu ou tronqué : on conserve ce qui a pu être validé proprement
             pass
